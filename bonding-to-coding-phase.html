@@ -36,7 +36,70 @@
         </address>
 <p>In <a href="/category/gsoc.html">GSoC</a>. </p>
 <p>tags: <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/python.html">Python</a> </p>
-</footer><!-- /.post-info -->      <p>{% notebook /Volumes/Data/Pending/GSOC/code/ipython_notebooks/ClusterCoefficient.ipynb %}</p>
+</footer><!-- /.post-info -->      <!-- {% notebook /Volumes/Data/Pending/GSOC/code/ipython_notebooks/Cluster\ Coefficient.ipynb %} -->
+<p>This week makrs the beginning of GSoC's actual coding perioid.</p>
+<p>The preceeding &quot;Bonding Period&quot; has been used to investigate the field and to fathom existing methods and approaches regarding their suitability for our endeavours.
+The result from these idea gathering is the Method Pool at the end of the article.</p>
+<p>Additionally in order to get to know the existing codebase of C-PAC simpler experimentations has been done.</p>
+<p>Here as a means to getting to know the C-PAC codebase and existing implementations, the cluster coefficient has been implemented using a trivial brute force approach.
+Furthermore this shed initial insides on how to use Cython and generate efficient C-Code from Python sources which can be important for later implementations of resourc hungry algorithms.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">cluster_coefficient</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">]</span> <span class="n">cmat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">]</span> <span class="n">centCluster</span><span class="p">,</span> <span class="nb">float</span> <span class="n">thresh</span><span class="p">):</span>
+    <span class="n">cdef</span> <span class="n">unsigned</span> <span class="nb">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span>
+    <span class="n">degree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cmat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cmat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">cmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="p">((</span><span class="n">cmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">cmat</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">centCluster</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)))</span>
+</pre></div>
+<div class="section" id="outlook">
+<h2>Outlook</h2>
+<p>As per the GSoC proposal we will focus on more sophisticated measures in the further progress of the project. Methods belonging to the realm of community detection/modularity will be in the focus. These approaches do not only summarize the presence of densely interconnected groups but give a measure of the exact size and composition.</p>
+<p>One performant algorithm for this approach is the so called “Louvain method”.
+This algorithm employs a heuristic method to optimize the modularity structure and give as output a (highly accurate) approximation of the community structure.</p>
+<img alt="" src="../images/louvain_method.jpg" />
+</div>
+<div class="section" id="method-pool">
+<h2>Method Pool</h2>
+<div class="section" id="louvain">
+<h3>Louvain</h3>
+<p>(Blondel, Guillaume, Lambiotte, &amp; Lefebvre, 2008)</p>
+<p>Heuristic approach for greedy modularity optimization
+greedy -&gt; limit to local optimization
+Multi resolution through hierarchical scheme -&gt; after meta step nodes accumulated together to form “super node”
+tree/dendrogram implies O(log n) complexity</p>
+</div>
+<div class="section" id="infomap">
+<h3>InfoMap</h3>
+<p>(Rosvall &amp; Bergstrom, 2007; 2008)</p>
+<p>Modularity optimization is a special case of a larger problem: Finding communities by optimizing some quality function Q. The Louvain method described above assume that Q = M (Moduliarty), seeking partitions with maximal modularity. The Infomap algorithm follows the general heuristic of the Louvain approach by locally moving nodes, however attempts to identify communities by minimizing the map equation L, an entropy-based measure of the partition quality. Also known as “flow optimization”</p>
+<p>Runtime: O(N log N)</p>
+</div>
+<div class="section" id="rich-club">
+<h3>Rich Club</h3>
+<p>(Colizza, Flammini, Serrano, &amp; Vespignani, 2006; Gollo, Zalesky, Hutchison, van den Heuvel, &amp; Breakspear, 2015; Senden, Deco, de Reus, Goebel, &amp; van den Heuvel, 2014; van den Heuvel &amp; Sporns, 2011)</p>
+<p>The so-called “rich-club” phenomenon in networks is said to be present when the hubs of a network tend to be more densely connected among themselves than nodes of a lower degree (Colizza et al., 2006). The name arises from the analogy with social systems, where highly central individuals— being “rich” in connections—often form a highly interconnected club</p>
+<p>Rich Club and Hubs are popping up in literature as they have been shown to be an underlying factor in pathological changes (e.g Alzheimer, Schizophrenia). (Crossley et al 2014)</p>
+<div class="section" id="important-graph-metrics-for-rich-club">
+<h4>Important Graph Metrics for Rich Club</h4>
+<ul class="simple">
+<li>s-core decomposition (Eidsaa &amp; Almaas, 2013)</li>
+<li>Modularity partitioning ala Newman (Lancichinetti &amp; Fortunato, 2009)</li>
+<li>Betweenness Centrality</li>
+<li>Rich Club Centrality</li>
+</ul>
+</div>
+</div>
+<div class="section" id="oslom">
+<h3>OSLOM</h3>
+<p>(Lancichinetti, Radicchi, Ramasco, &amp; Fortunato, 2011)</p>
+<p>The OSLOM method is based on the local optimization of a fitness function expressing the statistical significance of clusters with respect to random fluctuations, which is estimated with tools of Extreme and Order Statistics.</p>
+<p>In contrast to other community detection methods like Louvain Method and InfoMap, OSLOM is capable of detecting overlapping communities, which is crucial as real world (esp. biological networks) exhibit this property.</p>
+</div>
+</div>
 
     </div><!-- /.entry-content -->
 
