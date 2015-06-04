@@ -51,8 +51,171 @@
 
     <div class='row-fluid''>
         <div class="article-title span9">
-            <a href="/bonding-to-coding-phase.html"><h1>Bonding to Coding Phase</h1></a>
+            <a href="/taming-communities.html"><h1>Making sense of Communities</h1></a>
         </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span2">
+<p>Thu 04 June 2015 </p>
+
+<p style="text-align: left;">
+Filed under <a href="/category/gsoc.html">GSoC</a>
+</p>
+<p style="text-align: left;">
+ 
+    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/community-detection.html">Community Detection</a> <a href="/tag/neuroimaging.html">Neuroimaging</a> </p>
+<p>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+</p>
+      </div>
+      <div class="article-content span8">
+	<div class="section" id="introduction">
+<h2>Introduction</h2>
+<p>In order to experiment and interpret the output of the community algorithm I cached and extracted the graph that gets computed during the C-PAC workflow.
+This enables me to have a quicker turnover on trying out things more interactivly wihtout the time-consuming waiting of the build up of the correlation matrix.
+At this stage of investigation the previous steps on how I went up with this particular data is irrelevant. That is not to say to forget about the other parts, they will
+be revisted at a later stage and are open for optimization. Here it was important to first have a running system which can be tested on real world data and investigated in
+terms of if the communites obtained make sense in a neuroimaging setting.</p>
+</div>
+<div class="section" id="data-extraction">
+<h2>Data extraction</h2>
+<p>Once the correlation matrix is thresholded to a binary adjacency matrix the graph can be transformed into a networkx graph structure via.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span><span class="n">adjacenyMatrix</span><span class="p">):</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_numpy_matrix</span><span class="p">(</span><span class="n">adjacenyMatrix</span><span class="p">)</span>
+</pre></div>
+<p><em>Networkx</em> offers very efficient data strucutes to hold large data sets.</p>
+<div class="highlight"><pre><span class="n">G</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
+<span class="mi">81602</span>
+</pre></div>
+<div class="highlight"><pre><span class="n">G</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
+<span class="mi">804740</span>
+</pre></div>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">Graph</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;pickledGraph&#39;</span><span class="p">))</span>
+</pre></div>
+<div class="highlight"><pre><span class="n">G</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&#39;pickledGraph&#39;</span><span class="p">))</span>
+</pre></div>
+<div class="highlight"><pre>    <span class="n">partitionDump</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">[</span>
+    <span class="p">(</span><span class="mi">967</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">968</span><span class="p">,</span> <span class="mi">165</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">969</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">970</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">971</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">972</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">973</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">974</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">976</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">977</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">978</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">979</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">980</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">981</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">982</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">983</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">984</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">985</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">986</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">987</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">988</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">989</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">990</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">991</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">992</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">993</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">994</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">995</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">996</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">997</span><span class="p">,</span> <span class="mi">71</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">998</span><span class="p">,</span> <span class="mi">71</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">999</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="o">...</span><span class="p">]</span>
+</pre></div>
+<p>A graph with these attributes uses only ~50MB on disk as a pickled python object.</p>
+<p>The graph and the results of the <em>Louvain</em> algorithm were both serialized to disk in order to be decoupled from the current (debug-) session for more comfortable
+investigation.</p>
+</div>
+<div class="section" id="results-and-visualization">
+<h2>Results and visualization</h2>
+<div class="section" id="parameters-of-the-computed-graph-partitions">
+<h3>Parameters of the computed graph partitions</h3>
+<p>The results of the <em>Louvain</em> community detection algorithm on this graph are as follows:</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">CPAC.community_detection.louvain</span> <span class="kn">as</span> <span class="nn">lou</span>
+<span class="n">lou</span><span class="o">.</span><span class="n">modularity</span><span class="p">(</span><span class="n">partitionDump</span><span class="p">,</span> <span class="n">G</span><span class="p">)</span>
+<span class="mf">0.8681385957598554</span>
+</pre></div>
+<p>The algorithm could achive a modularity of ~0.87 on the graph fed into. This result is consistent over several implementations of the <em>Louvain Method</em>. Other approaches for
+community detecion like <em>InfoMap</em> achive very similar results.</p>
+<div class="highlight"><pre><span class="c">#Louvain community detection algorithm from disk</span>
+<span class="n">partitionDump</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&#39;partitionDump&#39;</span><span class="p">))</span>
+<span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">partitionDump</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+<span class="mi">17855</span>
+</pre></div>
+<p>The number of detected communities (17567) is considerable large. Due to inherent properties of the fMRI modularity this is expectable.</p>
+</div>
+<div class="section" id="visualization">
+<h3>visualization</h3>
+<div class="figure">
+<img alt="" src="../images/communities-size-distribution.png" />
+</div>
+<p>Figure 1 depicts the distribution of sizes across all detected modularity classes (communites). It is clearly visible that only approx. ~20 communites consists of more than
+500 nodes.</p>
+<div class="figure">
+<img alt="" src="../images/graphviz.png" />
+</div>
+<p>Figure 2 is visualization of the detected communities in the OpenOrd Layout <a class="footnote-reference" href="#id4" id="id1">[1]</a>. This visualization gives a more graphic view of how only approx. ~20 communites out of the
+~17k have a large enough number of nodes to be considerd as clusters.</p>
+<!-- .. image:: ../images/pie-chart.png -->
+<!-- :width: 528 -->
+<!-- :height: 1054 -->
+<!-- :scale: 50 -->
+</div>
+<div class="section" id="pain-points">
+<h3>Pain Points</h3>
+<p>Having a funcitoning workflow is just one part of it. Interpreting the results the algorithm spews out is another and import issue, especially in the context of scientific
+software. I first didn't had this aspect in mind put it turned out to be one of the major pain points this week. Ideally we would want to have as output of the workflow
+the graph remapped to a standard brain template, neatly parcellated into communites like it is seen in the Neuroimaing Literature <a class="footnote-reference" href="#id5" id="id2">[2]</a> <a class="footnote-reference" href="#id6" id="id3">[3]</a>. Unfortunalety research papers
+seldom come with the code/software attached that was used to process the data. The <em>Open Science</em> movement seems to be a promising remedey to these issues combining data
+sharing with open sour'ed reasearch code.</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Martin, S., Brown, W. M., Klavans, R., &amp; Boyack, K. W. (2011). OpenOrd: an open-source toolbox for large graph layout (Vol. 7868, p. 786806). Presented at the Proceedings of the SPIE. <a class="reference external" href="http://doi.org/10.1117/12.871402">http://doi.org/10.1117/12.871402</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Zuo, X.-N., Ehmke, R., Mennes, M., Imperati, D., Castellanos, F. X., Sporns, O., &amp; Milham, M. P. (2012). Network centrality in the human functional connectome. Cerebral Cortex (New York, N.Y. : 1991), 22(8), 1862–1875. <a class="reference external" href="http://doi.org/10.1093/cercor/bhr269">http://doi.org/10.1093/cercor/bhr269</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Meunier, D., Lambiotte, R., &amp; Bullmore, E. T. (2010). Modular and Hierarchically Modular Organization of Brain Networks. Frontiers in Neuroscience, 4, 1–11. <a class="reference external" href="http://doi.org/10.3389/fnins.2010.00200">http://doi.org/10.3389/fnins.2010.00200</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+ 
+	<a class="btn btn-mini xsmall" href="/taming-communities.html">
+          <i class="icon-comment"></i> Comment </a>
+	<hr />
+      </div>
+      
+    </div>
+    
+
+ 
+        
+
+
+
+    <div class='row-fluid'>
+      <div class='article-title span9'> 
+        <a href="/bonding-to-coding-phase.html"><h1>Bonding to Coding Phase</h1></a>
+      </div>
     </div>
     <div class="row-fluid">
       <div class="span2">
@@ -68,79 +231,16 @@ Filed under <a href="/category/gsoc.html">GSoC</a>
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 </p>
       </div>
-      <div class="article-content span8">
-	<!-- {% notebook /Volumes/Data/Pending/GSOC/code/ipython_notebooks/Cluster\ Coefficient.ipynb %} -->
-<p>This week makrs the beginning of GSoC's actual coding perioid.</p>
-<p>The preceeding &quot;Bonding Period&quot; has been used to investigate the field and to fathom existing methods and approaches regarding their suitability for our endeavours.
-The result from these idea gathering is the Method Pool at the end of the article.</p>
-<p>Additionally in order to get to know the existing codebase of C-PAC simpler experimentations has been done.</p>
-<p>Here as a means to getting to know the C-PAC codebase and existing implementations, the cluster coefficient has been implemented using a trivial brute force approach.
-Furthermore this shed initial insides on how to use Cython and generate efficient C-Code from Python sources which can be important for later implementations of resourc hungry algorithms.</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">cluster_coefficient</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">2</span><span class="p">]</span> <span class="n">cmat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">]</span> <span class="n">centCluster</span><span class="p">,</span> <span class="nb">float</span> <span class="n">thresh</span><span class="p">):</span>
-    <span class="n">cdef</span> <span class="n">unsigned</span> <span class="nb">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span>
-    <span class="n">degree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cmat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cmat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">cmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">cmat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-                    <span class="k">if</span> <span class="p">((</span><span class="n">cmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">cmat</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
-                        <span class="k">if</span> <span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                            <span class="n">centCluster</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">degree</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)))</span>
-</pre></div>
-<div class="section" id="outlook">
-<h2>Outlook</h2>
-<p>As per the GSoC proposal we will focus on more sophisticated measures in the further progress of the project. Methods belonging to the realm of community detection/modularity will be in the focus. These approaches do not only summarize the presence of densely interconnected groups but give a measure of the exact size and composition.</p>
-<p>One performant algorithm for this approach is the so called “Louvain method”.
-This algorithm employs a heuristic method to optimize the modularity structure and give as output a (highly accurate) approximation of the community structure.</p>
-<img alt="" src="../images/louvain_method.jpg" />
-</div>
-<div class="section" id="method-pool">
-<h2>Method Pool</h2>
-<div class="section" id="louvain">
-<h3>Louvain</h3>
-<p>(Blondel, Guillaume, Lambiotte, &amp; Lefebvre, 2008)</p>
-<p>Heuristic approach for greedy modularity optimization
-greedy -&gt; limit to local optimization
-Multi resolution through hierarchical scheme -&gt; after meta step nodes accumulated together to form “super node”
-tree/dendrogram implies O(log n) complexity</p>
-</div>
-<div class="section" id="infomap">
-<h3>InfoMap</h3>
-<p>(Rosvall &amp; Bergstrom, 2007; 2008)</p>
-<p>Modularity optimization is a special case of a larger problem: Finding communities by optimizing some quality function Q. The Louvain method described above assume that Q = M (Moduliarty), seeking partitions with maximal modularity. The Infomap algorithm follows the general heuristic of the Louvain approach by locally moving nodes, however attempts to identify communities by minimizing the map equation L, an entropy-based measure of the partition quality. Also known as “flow optimization”</p>
-<p>Runtime: O(N log N)</p>
-</div>
-<div class="section" id="rich-club">
-<h3>Rich Club</h3>
-<p>(Colizza, Flammini, Serrano, &amp; Vespignani, 2006; Gollo, Zalesky, Hutchison, van den Heuvel, &amp; Breakspear, 2015; Senden, Deco, de Reus, Goebel, &amp; van den Heuvel, 2014; van den Heuvel &amp; Sporns, 2011)</p>
-<p>The so-called “rich-club” phenomenon in networks is said to be present when the hubs of a network tend to be more densely connected among themselves than nodes of a lower degree (Colizza et al., 2006). The name arises from the analogy with social systems, where highly central individuals— being “rich” in connections—often form a highly interconnected club</p>
-<p>Rich Club and Hubs are popping up in literature as they have been shown to be an underlying factor in pathological changes (e.g Alzheimer, Schizophrenia). (Crossley et al 2014)</p>
-<div class="section" id="important-graph-metrics-for-rich-club">
-<h4>Important Graph Metrics for Rich Club</h4>
-<ul class="simple">
-<li>s-core decomposition (Eidsaa &amp; Almaas, 2013)</li>
-<li>Modularity partitioning ala Newman (Lancichinetti &amp; Fortunato, 2009)</li>
-<li>Betweenness Centrality</li>
-<li>Rich Club Centrality</li>
-</ul>
-</div>
-</div>
-<div class="section" id="oslom">
-<h3>OSLOM</h3>
-<p>(Lancichinetti, Radicchi, Ramasco, &amp; Fortunato, 2011)</p>
-<p>The OSLOM method is based on the local optimization of a fitness function expressing the statistical significance of clusters with respect to random fluctuations, which is estimated with tools of Extreme and Order Statistics.</p>
-<p>In contrast to other community detection methods like Louvain Method and InfoMap, OSLOM is capable of detecting overlapping communities, which is crucial as real world (esp. biological networks) exhibit this property.</p>
-</div>
-</div>
+      <div class="summary span8">
+	<p class="first last">First steps with C-PAC</p>
  
 	<a class="btn btn-mini xsmall" href="/bonding-to-coding-phase.html">
-          <i class="icon-comment"></i> Comment </a>
+          <i class="icon-plus-sign"></i> Read More </a>
 	<hr />
       </div>
       
     </div>
-    
+      
 <div class="pagination">
 <ul>
     <li class="prev disabled"><a href="#">&larr; Previous</a></li>
