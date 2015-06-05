@@ -146,7 +146,7 @@ investigation.</p>
 <span class="mf">0.8681385957598554</span>
 </pre></div>
 <p>The algorithm could achive a modularity of ~0.87 on the graph fed into. This result is consistent over several implementations of the <em>Louvain Method</em>. Other approaches for
-community detecion like <em>InfoMap</em> achive very similar results.</p>
+community detecion like <em>InfoMap</em> achive very similar results on the same graph.</p>
 <div class="highlight"><pre><span class="c">#Louvain community detection algorithm from disk</span>
 <span class="n">partitionDump</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&#39;partitionDump&#39;</span><span class="p">))</span>
 <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">partitionDump</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
