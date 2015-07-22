@@ -51,8 +51,115 @@
 
     <div class='row-fluid''>
         <div class="article-title span9">
-            <a href="/evaluating-community-detection-results.html"><h1>evaluating community detection results</h1></a>
+            <a href="/implementing-infomap.html"><h1>implementing infomap</h1></a>
         </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span2">
+<p>Wed 22 July 2015 </p>
+
+<p style="text-align: left;">
+Filed under <a href="/category/gsoc.html">GSoC</a>
+</p>
+<p style="text-align: left;">
+ 
+    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/infomap.html">Infomap</a> <a href="/tag/map-equation.html">Map Equation</a> <a href="/tag/python.html">Python</a> </p>
+<p>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+</p>
+      </div>
+      <div class="article-content span8">
+	<div class="section" id="id1">
+<h2>Implementing Infomap</h2>
+<p>In previous entries it was already mentioned:
+Besides the Louvain algorithm there is another popular choice among community detecion algorithms: <em>Infomap</em></p>
+<div class="section" id="louvain-vs-infomap">
+<h3>Louvain vs Infomap</h3>
+<p>The is a bit of ambiguity in the terminilogy here:</p>
+<p>What is commonly understood as the Louvain method consists actually of a more general underlying heuristic and the introduction of a quality measure.</p>
+<dl class="docutils">
+<dt>Louvain <em>Method</em> <span class="classifier-delimiter">:</span> <span class="classifier">A specific optimization algorithm based on modularity</span></dt>
+<dd>Modularity optimization is a special case of a larger problem: Finding communities by optimizing some quality function Q.
+The Louvain method takes Q = M (Moduliarty), and seeks partitions with maximal modularity.</dd>
+<dt>Louvain <em>Framework</em> <span class="classifier-delimiter">:</span> <span class="classifier">General heuristic to locally optimize a quality function Q</span></dt>
+<dd>A general approach indepedent from a concrete quality function Q.</dd>
+</dl>
+<p>The Infomap algorithm follows the general heuristic of the Louvain <em>Framework</em> by locally moving nodes, however attempts to indentify communities by minimizing the
+map equation L, an entropy-based measure of the partition quality <a class="footnote-reference" href="#id6" id="id2">[1]</a> <a class="footnote-reference" href="#id7" id="id3">[2]</a>.</p>
+</div>
+<div class="section" id="the-map-equation">
+<h3>The Map Equation</h3>
+<p>The term <tt class="docutils literal">map</tt> in map equation comes from the notion that clustering of real-world networks with respect to flow resembles cartography of traffic infrastructure
+for better navigation.</p>
+<p>Optimizing the map equation over possible module assignments identifies modules in which flow stays for a relatively long time, much like geographical maps identify
+cities as regions in which traffic stays for a relative long time. Flow can refer to real flow of, for example, passengers moving between airports, or flow of random
+walkers guided by the nodes and links of the network as a proxy for the real flow.
+But given the network structure, what is the optimal number of modules and the optimal assignment of nodes into those modules?</p>
+<p>The map equation answers these questions using the
+fundamental principles of information theory. All regularities
+in data can be used to compress the data, such that the
+degree of compression becomes a measure for the success
+in finding regularities in the data. The map equation takes
+advantage of this minimum description principle by measuring
+the description length of a random walker on a network <a class="footnote-reference" href="#id8" id="id4">[3]</a>.</p>
+<p>The map equation L(M) gives the average number of bits per step that it takes to describe an infinite random walk on a network partitioned according to M:</p>
+<div class="figure">
+<img alt="" src="../images/infomap/map.png" />
+</div>
+<p>This equation comprises two terms: first is the entropy of the
+movement between modules, and second is the entropy of
+movements within modules (where exiting the module also is
+considered a movement). Each is weighted by the frequency with
+which it occurs in the particular partitioning. Here, q􏰾_arc is the
+probability that the random walk switches modules on any given
+step. H(Q) is the entropy of the module names, i.e., the entropy
+of the underlined codewords. H(Pi) is the entropy of
+the within-module movements, including the exit code for
+module i. The weight p^i_arc is the fraction of within-module
+movements that occur in module i, plus the probability of exiting
+module i <a class="footnote-reference" href="#id6" id="id5">[1]</a>.</p>
+<dl class="docutils">
+<dt>For more details for the formal aspects:</dt>
+<dd><a class="reference external" href="http://www.pnas.org/content/suppl/2008/01/10/0706851105.DC1/06851SuppAppendix.pdf">http://www.pnas.org/content/suppl/2008/01/10/0706851105.DC1/06851SuppAppendix.pdf</a></dd>
+</dl>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> Rosvall, M., &amp; Bergstrom, C. T. (2008). Maps of random walks on complex networks reveal community structure. Pnas, 105(4), 1118–1123. <a class="reference external" href="http://doi.org/10.1073/pnas.0706851105">http://doi.org/10.1073/pnas.0706851105</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23. <a class="reference external" href="http://doi.org/10.1140/epjst/e2010-01179-1">http://doi.org/10.1140/epjst/e2010-01179-1</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>Bae, S.-H., Halperin, D., West, J., Rosvall, M., &amp; Howe, B. (2013). Scalable Flow-Based Community Detection for Large-Scale Network Analysis (pp. 303–310). Presented at the 2013 IEEE 13th International Conference on Data Mining Workshops (ICDMW), IEEE. <a class="reference external" href="http://doi.org/10.1109/ICDMW.2013.138">http://doi.org/10.1109/ICDMW.2013.138</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+ 
+	<a class="btn btn-mini xsmall" href="/implementing-infomap.html">
+          <i class="icon-comment"></i> Comment </a>
+	<hr />
+      </div>
+      
+    </div>
+    
+
+ 
+        
+
+
+
+    <div class='row-fluid'>
+      <div class='article-title span9'> 
+        <a href="/evaluating-community-detection-results.html"><h1>evaluating community detection results</h1></a>
+      </div>
     </div>
     <div class="row-fluid">
       <div class="span2">
@@ -68,395 +175,15 @@ Filed under <a href="/category/gsoc.html">GSoC</a>
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 </p>
       </div>
-      <div class="article-content span8">
-	<div class="section" id="introduction">
-<h2>Introduction</h2>
-<p>We want to evaluate the results of the community detection algorithm over some real world data.
-For this purpose we used 29 subjects from the ABIDE dataset (<a class="reference external" href="http://fcon_1000.projects.nitrc.org/indi/abide/">http://fcon_1000.projects.nitrc.org/indi/abide/</a>) (Yale Site).</p>
-<p>These 29 subjects have later been split up into 2 groups (n=14 and n=15) according to the behavioural meta data available within in the dataset.
-To concentrate on evaluating the community detection algorithm we made use of the preprocessed timeseries.
-These ROI's timeseries have been extracted according to the CC400 Atlas.</p>
-</div>
-<div class="section" id="automatization-and-mini-pipeline">
-<h2>Automatization and &quot;Mini Pipeline&quot;</h2>
-<p>In order to process and analyse the data in an automated manner a &quot;mini pipeline&quot; has been developed.</p>
-<div class="section" id="processing">
-<h3>Processing:</h3>
-<blockquote>
-<ul class="simple">
-<li>load the *.1D files from disk into a pandas data frame</li>
-<li>compute the correlation</li>
-<li>threshold the correlation matrix</li>
-<li>get a graph representation of the trehsolded adjacency matrix</li>
-<li>run the community detection algorithm on this graph</li>
-</ul>
-</blockquote>
-</div>
-<div class="section" id="analysis">
-<h3>Analysis:</h3>
-<blockquote>
-<ul class="simple">
-<li>compute and print out metrics of each detected community (size and number of nodes of each community)</li>
-<li>annotate the graph with the detected communites</li>
-<li>color code the nodes of the graph corresponding to the which communiy it belongs and plot the result</li>
-<li>compute the community size distribution per level and superimpose the result in one plot</li>
-<li>compute In-Degree/Out-Degree ratio per community</li>
-</ul>
-</blockquote>
-</div>
-</div>
-<div class="section" id="results">
-<h2>Results</h2>
-<p>By way of illustrating the computed plots for one subject are depicted in the following:</p>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/subject_0_community_network.png" />
-<p class="caption">Here we can see the rendered graph with its nodes color coded according to the community it belongs to.
-On the left side of the periphery of the circle we see a lot of the singletons (each node altering color form neighbour to neighbour).</p>
-</div>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/subject_0_community_size_distribution_level_2.png" />
-<p class="caption">This figure depicts a plot of the community size distribution for one subject.
-The commmunit detection algorithm computed a dendrogram of 3 levels (0-2).
-The community size distribution for each level is superimposed on each other in this plot.
-The figure exhibts a common pattern: The community size distrubtion follows approximately a declining exponential curve - a lot of small communites, less large ones.
-Referring  to figure 1 we see here clearly the large amount of singletons per level (approx. ~55 on level 2)</p>
-</div>
-<p>The plot was generated with the help of the pandas package and its powerful groupby function.</p>
-<div class="highlight"><pre><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="n">level</span><span class="p">,</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">dct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comm_map</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;level&#39;</span><span class="p">,</span> <span class="s">&#39;size&#39;</span><span class="p">])</span>
-<span class="n">size_count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;level&#39;</span><span class="p">])[</span><span class="s">&#39;size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
-<span class="n">size_count</span> <span class="o">=</span> <span class="n">size_count</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="n">size_count</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;level&#39;</span><span class="p">,</span> <span class="s">&#39;community size&#39;</span><span class="p">,</span> <span class="s">&#39;number of communities&#39;</span><span class="p">]</span>
-</pre></div>
-<div class="section" id="group-results">
-<h3>Group results</h3>
-<p>In the following depicts each boxplot the statistic about the community size distribution grouped per level</p>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/box_plot_group1.png" />
-<p class="caption">Results for Group 1</p>
-</div>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/box_plot_group2.png" />
-<p class="caption">Results for Group 2</p>
-</div>
-</div>
-<div class="section" id="conclusion">
-<h3>Conclusion</h3>
-<p>Further investigations and experimentations with larger datasets or data extracted by an atlas which gives more ROI's are necessary to really see group differences.</p>
-</div>
-</div>
-<div class="section" id="appendix">
-<h2>Appendix</h2>
-<div class="section" id="raw-data-exemplified-for-group-1">
-<h3>Raw Data exemplified for Group 1</h3>
-<p>The above boxplot for Group 1 was generated from this dataframe.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="11%" />
-<col width="11%" />
-<col width="26%" />
-<col width="51%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">index</th>
-<th class="head">level</th>
-<th class="head">community size</th>
-<th class="head">average number of communities</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>0</td>
-<td>0</td>
-<td>1</td>
-<td>73.2647058824</td>
-</tr>
-<tr><td>1</td>
-<td>0</td>
-<td>2</td>
-<td>20.65</td>
-</tr>
-<tr><td>2</td>
-<td>0</td>
-<td>3</td>
-<td>12.325</td>
-</tr>
-<tr><td>3</td>
-<td>0</td>
-<td>4</td>
-<td>5.35</td>
-</tr>
-<tr><td>4</td>
-<td>0</td>
-<td>5</td>
-<td>3.7027027027</td>
-</tr>
-<tr><td>5</td>
-<td>0</td>
-<td>6</td>
-<td>2.58333333333</td>
-</tr>
-<tr><td>6</td>
-<td>0</td>
-<td>7</td>
-<td>1.64705882353</td>
-</tr>
-<tr><td>7</td>
-<td>0</td>
-<td>8</td>
-<td>1.72413793103</td>
-</tr>
-<tr><td>8</td>
-<td>0</td>
-<td>9</td>
-<td>2.0</td>
-</tr>
-<tr><td>9</td>
-<td>0</td>
-<td>10</td>
-<td>3.14285714286</td>
-</tr>
-<tr><td>10</td>
-<td>0</td>
-<td>11</td>
-<td>1.38461538462</td>
-</tr>
-<tr><td>11</td>
-<td>0</td>
-<td>12</td>
-<td>1.0</td>
-</tr>
-<tr><td>12</td>
-<td>0</td>
-<td>13</td>
-<td>1.4</td>
-</tr>
-<tr><td>13</td>
-<td>0</td>
-<td>14</td>
-<td>1.38461538462</td>
-</tr>
-<tr><td>14</td>
-<td>0</td>
-<td>15</td>
-<td>1.0</td>
-</tr>
-<tr><td>15</td>
-<td>0</td>
-<td>16</td>
-<td>1.5</td>
-</tr>
-<tr><td>16</td>
-<td>0</td>
-<td>17</td>
-<td>1.0</td>
-</tr>
-<tr><td>17</td>
-<td>0</td>
-<td>18</td>
-<td>1.0</td>
-</tr>
-<tr><td>18</td>
-<td>0</td>
-<td>19</td>
-<td>2.0</td>
-</tr>
-<tr><td>19</td>
-<td>0</td>
-<td>20</td>
-<td>1.27272727273</td>
-</tr>
-<tr><td>20</td>
-<td>0</td>
-<td>21</td>
-<td>1.0</td>
-</tr>
-<tr><td>21</td>
-<td>0</td>
-<td>22</td>
-<td>1.0</td>
-</tr>
-<tr><td>22</td>
-<td>0</td>
-<td>23</td>
-<td>1.2</td>
-</tr>
-<tr><td>23</td>
-<td>0</td>
-<td>24</td>
-<td>1.0</td>
-</tr>
-<tr><td>24</td>
-<td>0</td>
-<td>25</td>
-<td>1.0</td>
-</tr>
-<tr><td>25</td>
-<td>0</td>
-<td>26</td>
-<td>1.0</td>
-</tr>
-<tr><td>26</td>
-<td>0</td>
-<td>27</td>
-<td>1.0</td>
-</tr>
-<tr><td>27</td>
-<td>0</td>
-<td>28</td>
-<td>1.0</td>
-</tr>
-<tr><td>28</td>
-<td>0</td>
-<td>29</td>
-<td>1.0</td>
-</tr>
-<tr><td>29</td>
-<td>0</td>
-<td>30</td>
-<td>1.0</td>
-</tr>
-<tr><td>30</td>
-<td>0</td>
-<td>31</td>
-<td>1.0</td>
-</tr>
-<tr><td>31</td>
-<td>0</td>
-<td>32</td>
-<td>1.0</td>
-</tr>
-<tr><td>32</td>
-<td>0</td>
-<td>33</td>
-<td>1.0</td>
-</tr>
-<tr><td>33</td>
-<td>0</td>
-<td>36</td>
-<td>1.0</td>
-</tr>
-<tr><td>34</td>
-<td>0</td>
-<td>37</td>
-<td>1.0</td>
-</tr>
-<tr><td>35</td>
-<td>0</td>
-<td>39</td>
-<td>1.0</td>
-</tr>
-<tr><td>36</td>
-<td>0</td>
-<td>41</td>
-<td>1.0</td>
-</tr>
-<tr><td>37</td>
-<td>0</td>
-<td>44</td>
-<td>1.0</td>
-</tr>
-<tr><td>38</td>
-<td>0</td>
-<td>45</td>
-<td>1.0</td>
-</tr>
-<tr><td>39</td>
-<td>0</td>
-<td>46</td>
-<td>1.0</td>
-</tr>
-<tr><td>40</td>
-<td>0</td>
-<td>50</td>
-<td>1.0</td>
-</tr>
-<tr><td>41</td>
-<td>0</td>
-<td>52</td>
-<td>1.0</td>
-</tr>
-<tr><td>42</td>
-<td>0</td>
-<td>53</td>
-<td>1.0</td>
-</tr>
-<tr><td>43</td>
-<td>0</td>
-<td>62</td>
-<td>1.0</td>
-</tr>
-<tr><td>44</td>
-<td>1</td>
-<td>1</td>
-<td>73.325</td>
-</tr>
-<tr><td>45</td>
-<td>1</td>
-<td>2</td>
-<td>5.225</td>
-</tr>
-<tr><td>46</td>
-<td>1</td>
-<td>3</td>
-<td>4.2</td>
-</tr>
-<tr><td>47</td>
-<td>1</td>
-<td>4</td>
-<td>2.72413793103</td>
-</tr>
-<tr><td>48</td>
-<td>1</td>
-<td>5</td>
-<td>2.28571428571</td>
-</tr>
-<tr><td>49</td>
-<td>1</td>
-<td>6</td>
-<td>1.5</td>
-</tr>
-<tr><td>50</td>
-<td>1</td>
-<td>7</td>
-<td>1.0</td>
-</tr>
-<tr><td>51</td>
-<td>1</td>
-<td>8</td>
-<td>1.0</td>
-</tr>
-<tr><td>52</td>
-<td>1</td>
-<td>15</td>
-<td>1.0</td>
-</tr>
-<tr><td>53</td>
-<td>2</td>
-<td>1</td>
-<td>84.9166666667</td>
-</tr>
-<tr><td>54</td>
-<td>2</td>
-<td>2</td>
-<td>1.83333333333</td>
-</tr>
-<tr><td>55</td>
-<td>2</td>
-<td>3</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
- 
+      <div class="summary span8">
+	 
 	<a class="btn btn-mini xsmall" href="/evaluating-community-detection-results.html">
-          <i class="icon-comment"></i> Comment </a>
+          <i class="icon-plus-sign"></i> Read More </a>
 	<hr />
       </div>
       
     </div>
-    
+      
 
  
         

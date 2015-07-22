@@ -51,8 +51,115 @@
 
     <div class='row-fluid''>
         <div class="article-title span9">
-            <a href="/infomap-python-wrapper.html"><h1>infomap-python-wrapper</h1></a>
+            <a href="/implementing-infomap.html"><h1>implementing infomap</h1></a>
         </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span2">
+<p>Wed 22 July 2015 </p>
+
+<p style="text-align: left;">
+Filed under <a href="/category/gsoc.html">GSoC</a>
+</p>
+<p style="text-align: left;">
+ 
+    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/infomap.html">Infomap</a> <a href="/tag/map-equation.html">Map Equation</a> <a href="/tag/python.html">Python</a> </p>
+<p>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+</p>
+      </div>
+      <div class="article-content span8">
+	<div class="section" id="id1">
+<h2>Implementing Infomap</h2>
+<p>In previous entries it was already mentioned:
+Besides the Louvain algorithm there is another popular choice among community detecion algorithms: <em>Infomap</em></p>
+<div class="section" id="louvain-vs-infomap">
+<h3>Louvain vs Infomap</h3>
+<p>The is a bit of ambiguity in the terminilogy here:</p>
+<p>What is commonly understood as the Louvain method consists actually of a more general underlying heuristic and the introduction of a quality measure.</p>
+<dl class="docutils">
+<dt>Louvain <em>Method</em> <span class="classifier-delimiter">:</span> <span class="classifier">A specific optimization algorithm based on modularity</span></dt>
+<dd>Modularity optimization is a special case of a larger problem: Finding communities by optimizing some quality function Q.
+The Louvain method takes Q = M (Moduliarty), and seeks partitions with maximal modularity.</dd>
+<dt>Louvain <em>Framework</em> <span class="classifier-delimiter">:</span> <span class="classifier">General heuristic to locally optimize a quality function Q</span></dt>
+<dd>A general approach indepedent from a concrete quality function Q.</dd>
+</dl>
+<p>The Infomap algorithm follows the general heuristic of the Louvain <em>Framework</em> by locally moving nodes, however attempts to indentify communities by minimizing the
+map equation L, an entropy-based measure of the partition quality <a class="footnote-reference" href="#id6" id="id2">[1]</a> <a class="footnote-reference" href="#id7" id="id3">[2]</a>.</p>
+</div>
+<div class="section" id="the-map-equation">
+<h3>The Map Equation</h3>
+<p>The term <tt class="docutils literal">map</tt> in map equation comes from the notion that clustering of real-world networks with respect to flow resembles cartography of traffic infrastructure
+for better navigation.</p>
+<p>Optimizing the map equation over possible module assignments identifies modules in which flow stays for a relatively long time, much like geographical maps identify
+cities as regions in which traffic stays for a relative long time. Flow can refer to real flow of, for example, passengers moving between airports, or flow of random
+walkers guided by the nodes and links of the network as a proxy for the real flow.
+But given the network structure, what is the optimal number of modules and the optimal assignment of nodes into those modules?</p>
+<p>The map equation answers these questions using the
+fundamental principles of information theory. All regularities
+in data can be used to compress the data, such that the
+degree of compression becomes a measure for the success
+in finding regularities in the data. The map equation takes
+advantage of this minimum description principle by measuring
+the description length of a random walker on a network <a class="footnote-reference" href="#id8" id="id4">[3]</a>.</p>
+<p>The map equation L(M) gives the average number of bits per step that it takes to describe an infinite random walk on a network partitioned according to M:</p>
+<div class="figure">
+<img alt="" src="../images/infomap/map.png" />
+</div>
+<p>This equation comprises two terms: first is the entropy of the
+movement between modules, and second is the entropy of
+movements within modules (where exiting the module also is
+considered a movement). Each is weighted by the frequency with
+which it occurs in the particular partitioning. Here, q􏰾_arc is the
+probability that the random walk switches modules on any given
+step. H(Q) is the entropy of the module names, i.e., the entropy
+of the underlined codewords. H(Pi) is the entropy of
+the within-module movements, including the exit code for
+module i. The weight p^i_arc is the fraction of within-module
+movements that occur in module i, plus the probability of exiting
+module i <a class="footnote-reference" href="#id6" id="id5">[1]</a>.</p>
+<dl class="docutils">
+<dt>For more details for the formal aspects:</dt>
+<dd><a class="reference external" href="http://www.pnas.org/content/suppl/2008/01/10/0706851105.DC1/06851SuppAppendix.pdf">http://www.pnas.org/content/suppl/2008/01/10/0706851105.DC1/06851SuppAppendix.pdf</a></dd>
+</dl>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> Rosvall, M., &amp; Bergstrom, C. T. (2008). Maps of random walks on complex networks reveal community structure. Pnas, 105(4), 1118–1123. <a class="reference external" href="http://doi.org/10.1073/pnas.0706851105">http://doi.org/10.1073/pnas.0706851105</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23. <a class="reference external" href="http://doi.org/10.1140/epjst/e2010-01179-1">http://doi.org/10.1140/epjst/e2010-01179-1</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>Bae, S.-H., Halperin, D., West, J., Rosvall, M., &amp; Howe, B. (2013). Scalable Flow-Based Community Detection for Large-Scale Network Analysis (pp. 303–310). Presented at the 2013 IEEE 13th International Conference on Data Mining Workshops (ICDMW), IEEE. <a class="reference external" href="http://doi.org/10.1109/ICDMW.2013.138">http://doi.org/10.1109/ICDMW.2013.138</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+ 
+	<a class="btn btn-mini xsmall" href="/implementing-infomap.html">
+          <i class="icon-comment"></i> Comment </a>
+	<hr />
+      </div>
+      
+    </div>
+    
+
+ 
+        
+
+
+
+    <div class='row-fluid'>
+      <div class='article-title span9'> 
+        <a href="/infomap-python-wrapper.html"><h1>infomap-python-wrapper</h1></a>
+      </div>
     </div>
     <div class="row-fluid">
       <div class="span2">
@@ -68,164 +175,15 @@ Filed under <a href="/category/gsoc.html">GSoC</a>
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 </p>
       </div>
-      <div class="article-content span8">
-	<div class="section" id="plugging-in-infomap">
-<h2>Plugging in Infomap</h2>
-<p>Currently only the  <em>Louvain</em> community detecion algorithm has been tested and integrated into a workflow.
-The realm of community detection approaches is vast and many different approaches exist <a class="footnote-reference" href="#id3" id="id1">[1]</a>.
-While the <em>Louvain</em> method is often the go-to approach when it comes to efficient <em>modularity</em> based community measures there is another efficient
-choice of algorithm which follows a diffrent paradigm. The Infomap algorthm doesn't rely on modularity as a measruement to infer community but is
-based on an information theoretic viewpoint (For more please see <a class="footnote-reference" href="#id4" id="id2">[2]</a>)</p>
-<div class="section" id="using-the-python-wrapper">
-<h3>Using the Python wrapper</h3>
-<p>The authors and inventors of the <em>Infomap</em> algorthm provide a performant C++ implementation along their theoretical work to the research community.
-How to make use of their implementation in a productive high(er) level language like <em>Python</em>?
-Enter <em>SWIG</em>:</p>
-<blockquote class="epigraph">
-<em>SWIG</em> is a software development tool that connects programs written in C and C++ with a variety of high-level programming languages. SWIG is used with different types of target languages including common scripting languages such as Javascript, Perl, PHP, <strong>Python</strong>, Tcl and Ruby.</blockquote>
-<p>SWIG is typically used to parse C/C++ interfaces and generate the 'glue code' required for the above target languages to call into the C/C++ code.</p>
-<p>The Infomap source contains a specific directive in the makefile which allows to automatically generate these interfaces during the build process.</p>
-<div class="highlight"><pre>swig -c++ -python <span class="o">[</span>...<span class="o">]</span> <span class="k">$(</span>PY_BUILD_DIR<span class="k">)</span>/infomap_wrap.cpp
-</pre></div>
-<p>With this the compiled static object (generated from the native Code) gets wrapped by a Python file which provides the SWIG interface and allows to
-call methods directly from Python source.</p>
-<p>We can now naturally do</p>
-<div class="highlight"><pre><span class="c"># temporarily to manually update local path</span>
-<span class="c"># sys.path.append(os.path.abspath(&#39;infomap&#39;))</span>
-
-<span class="kn">from</span> <span class="nn">infomap</span> <span class="kn">import</span> <span class="n">infomap</span>
-</pre></div>
-<p>and are good to go.</p>
-</div>
-<div class="section" id="results">
-<h3>Results</h3>
-<p>Using the same preprocessing steps as for the <em>Louvain</em> method (time series extraction, correlation matrix, graph building through thresholding) we have the Graph in a variable <tt class="docutils literal">G</tt></p>
-<div class="highlight"><pre><span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_numpy_matrix</span><span class="p">(</span><span class="n">adjacenyMatrix</span><span class="p">)</span><span class="o">.</span>
-</pre></div>
-<div class="highlight"><pre><span class="n">G</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="n">G</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
-<span class="p">(</span><span class="mi">81602</span><span class="p">,</span> <span class="mi">804740</span><span class="p">)</span>
-</pre></div>
-<p>which we can pass to a method which calls in turn through the SWIG interface the native code to Infomap.</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">findCommunities</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Partition network with the Infomap algorithm.</span>
-<span class="sd">Annotates nodes with &#39;community&#39; id and return number of communities found.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="n">conf</span> <span class="o">=</span> <span class="n">infomap</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;--two-level&quot;</span><span class="p">);</span>
-<span class="c"># Input data</span>
-<span class="n">network</span> <span class="o">=</span> <span class="n">infomap</span><span class="o">.</span><span class="n">Network</span><span class="p">(</span><span class="n">conf</span><span class="p">);</span>
-<span class="c"># Output data</span>
-<span class="n">tree</span> <span class="o">=</span> <span class="n">infomap</span><span class="o">.</span><span class="n">HierarchicalNetwork</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
-
-<span class="k">print</span> <span class="s">&quot;Building network...&quot;</span>
-<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges_iter</span><span class="p">():</span>
-        <span class="n">network</span><span class="o">.</span><span class="n">addLink</span><span class="p">(</span><span class="o">*</span><span class="n">e</span><span class="p">)</span>
-
-<span class="n">network</span><span class="o">.</span><span class="n">finalizeAndCheckNetwork</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">));</span>
-
-<span class="c"># Cluster network</span>
-<span class="n">infomap</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">tree</span><span class="p">);</span>
-<span class="n">codelength</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">codelength</span><span class="p">()</span>
-<span class="k">print</span> <span class="s">&quot;Codelength:&quot;</span><span class="p">,</span> <span class="n">codelength</span>
-
-<span class="n">communities</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">leafIter</span><span class="p">():</span>
-        <span class="n">communities</span><span class="p">[</span><span class="n">leaf</span><span class="o">.</span><span class="n">originalLeafIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">leaf</span><span class="o">.</span><span class="n">parentNode</span><span class="o">.</span><span class="n">parentIndex</span>
-
-<span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="s">&#39;community&#39;</span><span class="p">,</span> <span class="n">communities</span><span class="p">)</span>
-<span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">numTopModules</span><span class="p">()</span>
-</pre></div>
-<p>The output generated by the Infomap algorithm is as follows:</p>
-<div class="highlight"><pre> <span class="n">numCommunities</span> <span class="o">=</span> <span class="n">findCommunities</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
-
-<span class="o">=======================================================</span>
-  <span class="n">Infomap</span> <span class="n">v0</span><span class="o">.</span><span class="mf">17.2</span> <span class="n">starts</span> <span class="n">at</span> <span class="p">[</span><span class="mi">2015</span><span class="o">-</span><span class="mo">06</span><span class="o">-</span><span class="mi">11</span> <span class="mi">15</span><span class="p">:</span><span class="mo">01</span><span class="p">:</span><span class="mi">45</span><span class="p">]</span>
-  <span class="o">-&gt;</span> <span class="n">Configuration</span><span class="p">:</span> <span class="n">two</span><span class="o">-</span><span class="n">level</span>
-  <span class="o">-&gt;</span> <span class="n">Use</span> <span class="n">undirected</span> <span class="n">flow</span> <span class="ow">and</span> <span class="mi">1</span><span class="n">st</span> <span class="n">order</span> <span class="n">Markov</span> <span class="n">dynamics</span>
-<span class="o">=======================================================</span>
-<span class="n">Building</span> <span class="n">network</span><span class="o">...</span>
- <span class="o">--&gt;</span> <span class="n">Found</span> <span class="mi">81602</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="mi">804740</span> <span class="n">links</span><span class="o">.</span>
- <span class="o">--&gt;</span> <span class="n">Ignored</span> <span class="mi">81602</span> <span class="bp">self</span><span class="o">-</span><span class="n">links</span><span class="o">.</span>
- <span class="o">--&gt;</span> <span class="mi">11367</span> <span class="n">dangling</span> <span class="n">nodes</span> <span class="p">(</span><span class="n">nodes</span> <span class="k">with</span> <span class="n">no</span> <span class="n">outgoing</span> <span class="n">links</span><span class="p">)</span><span class="o">.</span>
- <span class="o">==&gt;</span> <span class="mi">81602</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="mi">723138</span> <span class="n">links</span><span class="o">.</span>
-<span class="n">Calculating</span> <span class="k">global</span> <span class="n">flow</span><span class="o">...</span>
-  <span class="o">-&gt;</span> <span class="n">Using</span> <span class="n">undirected</span> <span class="n">links</span><span class="o">.</span>
-<span class="n">Calculating</span> <span class="n">one</span><span class="o">-</span><span class="n">level</span> <span class="n">codelength</span><span class="o">...</span> <span class="n">done</span><span class="err">!</span>
-  <span class="o">-&gt;</span> <span class="n">One</span><span class="o">-</span><span class="n">level</span> <span class="n">codelength</span><span class="p">:</span> <span class="mf">14.11430787</span>
-
-<span class="n">Attempt</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1</span> <span class="n">at</span> <span class="p">[</span><span class="mi">2015</span><span class="o">-</span><span class="mo">06</span><span class="o">-</span><span class="mi">11</span> <span class="mi">15</span><span class="p">:</span><span class="mo">01</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span>
-<span class="n">Initiated</span> <span class="n">to</span> <span class="n">codelength</span> <span class="mf">14.1143</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">16.11430787</span> <span class="ow">in</span> <span class="mi">81602</span> <span class="n">modules</span><span class="o">.</span>
-<span class="n">Two</span><span class="o">-</span><span class="n">level</span> <span class="n">compression</span><span class="p">:</span> <span class="mi">30</span><span class="o">%</span> <span class="mf">1.4</span><span class="o">%</span> <span class="mf">0.16</span><span class="o">%</span> <span class="mf">0.039</span><span class="o">%</span> <span class="mf">0.014</span><span class="o">%</span> <span class="mf">0.0045</span><span class="o">%</span> <span class="mf">0.0041</span><span class="o">%</span> <span class="n">to</span> <span class="mi">20257</span> <span class="n">modules</span> <span class="k">with</span> <span class="n">codelength</span> <span class="mf">9.670812527</span>
-
-<span class="n">Building</span> <span class="n">output</span> <span class="n">tree</span> <span class="k">with</span> <span class="n">links</span><span class="o">...</span>
-
-<span class="n">Best</span> <span class="n">end</span> <span class="n">modular</span> <span class="n">solution</span> <span class="ow">in</span> <span class="mi">2</span> <span class="n">levels</span><span class="p">:</span>
-<span class="n">Per</span> <span class="n">level</span> <span class="n">number</span> <span class="n">of</span> <span class="n">modules</span><span class="p">:</span>         <span class="p">[</span>      <span class="mi">20257</span><span class="p">,</span>           <span class="mi">0</span><span class="p">]</span> <span class="p">(</span><span class="nb">sum</span><span class="p">:</span> <span class="mi">20257</span><span class="p">)</span>
-<span class="n">Per</span> <span class="n">level</span> <span class="n">number</span> <span class="n">of</span> <span class="n">leaf</span> <span class="n">nodes</span><span class="p">:</span>      <span class="p">[</span>          <span class="mi">0</span><span class="p">,</span>       <span class="mi">81602</span><span class="p">]</span> <span class="p">(</span><span class="nb">sum</span><span class="p">:</span> <span class="mi">81602</span><span class="p">)</span>
-<span class="n">Per</span> <span class="n">level</span> <span class="n">average</span> <span class="n">child</span> <span class="n">degree</span><span class="p">:</span>      <span class="p">[</span>      <span class="mi">20257</span><span class="p">,</span>     <span class="mf">4.02834</span><span class="p">]</span> <span class="p">(</span><span class="n">average</span><span class="p">:</span> <span class="mf">4031.8</span><span class="p">)</span>
-<span class="n">Per</span> <span class="n">level</span> <span class="n">codelength</span> <span class="k">for</span> <span class="n">modules</span><span class="p">:</span>    <span class="p">[</span><span class="mf">0.839257614</span><span class="p">,</span> <span class="mf">0.000000000</span><span class="p">]</span> <span class="p">(</span><span class="nb">sum</span><span class="p">:</span> <span class="mf">0.839257614</span><span class="p">)</span>
-<span class="n">Per</span> <span class="n">level</span> <span class="n">codelength</span> <span class="k">for</span> <span class="n">leaf</span> <span class="n">nodes</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.000000000</span><span class="p">,</span> <span class="mf">8.831554913</span><span class="p">]</span> <span class="p">(</span><span class="nb">sum</span><span class="p">:</span> <span class="mf">8.831554913</span><span class="p">)</span>
-<span class="n">Per</span> <span class="n">level</span> <span class="n">codelength</span> <span class="n">total</span><span class="p">:</span>          <span class="p">[</span><span class="mf">0.839257614</span><span class="p">,</span> <span class="mf">8.831554913</span><span class="p">]</span> <span class="p">(</span><span class="nb">sum</span><span class="p">:</span> <span class="mf">9.670812527</span><span class="p">)</span>
-
-<span class="n">Codelength</span><span class="p">:</span> <span class="mf">9.67081252689</span>
-</pre></div>
-<div class="highlight"><pre><span class="k">print</span> <span class="s">&quot;Number of communities found:&quot;</span><span class="p">,</span> <span class="n">numCommunities</span>
-<span class="n">Number</span> <span class="n">of</span> <span class="n">communities</span> <span class="n">found</span><span class="p">:</span> <span class="mi">20257</span>
-</pre></div>
-<p>A modularity of 0.839257614 was achived. The algorithm partitioned the graph into 20257 different communities.
-This is compareable to the results generated by the <em>Louvain</em> approach.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Infomap</th>
-<th class="head">Louvain</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>0.839257614 (modularity)</td>
-<td>0.868138595 (modularity)</td>
-</tr>
-<tr><td>~20k (communities)</td>
-<td>~17k (communities))</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="outlook">
-<h3>Outlook</h3>
-<p>Having a proof of concept for both the <em>Louvain</em> and <em>Infomap</em> in place we can place both approaches into a common framework.</p>
-<p>Nescessary footwork to do:</p>
-<ul class="simple">
-<li>Interpreting the results and outputs of the algorithms in a princpled way</li>
-<li>Determining an adequate way to give an useful output back to the end-user</li>
-<li>Software design which decouples common functionality in both algorithms from paradigm specific (modularity vs. information theoretic) optimization steps</li>
-<li>+ decoupling of preprocessing steps (correlation Matrix computation) from actual algorithm</li>
-</ul>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Fortunato, S. (2009). Community detection in graphs. Physics Reports, 486(3), 75–174. <a class="reference external" href="http://doi.org/10.1016/j.physrep.2009.11.002">http://doi.org/10.1016/j.physrep.2009.11.002</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Rosvall, M., &amp; Bergstrom, C. T. (2008). Maps of random walks on complex networks reveal community structure. Pnas, 105(4), 1118–1123. <a class="reference external" href="http://doi.org/10.1073/pnas.0706851105">http://doi.org/10.1073/pnas.0706851105</a></td></tr>
-</tbody>
-</table>
-</div>
-</div>
- 
+      <div class="summary span8">
+	 
 	<a class="btn btn-mini xsmall" href="/infomap-python-wrapper.html">
-          <i class="icon-comment"></i> Comment </a>
+          <i class="icon-plus-sign"></i> Read More </a>
 	<hr />
       </div>
       
     </div>
-    
+      
 
  
         
