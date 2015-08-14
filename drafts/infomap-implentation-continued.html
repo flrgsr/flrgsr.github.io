@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <title>infomap implentation continued - GSoC Blog C-PAC</title>
+    <meta name="description" content="">
+    <meta name="author" content="Florian Gesser">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="/theme/html5.js"></script>
+    <![endif]-->
+
+
+    <!-- Le styles -->
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
+    <link href="/theme/local.css" rel="stylesheet">
+    <link href="/theme/pygments.css" rel="stylesheet">
+    <link href="/theme/font-awesome.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Gudea:400,400italic|Alegreya+SC' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+<header class="blog-header">
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span9">
+	<a href="" class="brand">GSoC Blog C-PAC</a>
+      </div>
+
+      <div class="span3" id="blog-nav">
+	<ul class="nav nav-pills pull-right">
+	    <li  class="active" >
+	      <a href="/category/gsoc.html ">GSoC</a>
+	</ul>
+      </div>
+    </div> <!-- End of fluid row-->
+  </div>   <!-- End of Container-->
+</header>
+    
+<div class="container">
+    <div class="content">
+    <div class="row-fluid">
+
+        <div class="span10">
+    <div class='article'>
+      <div class="row-fluid">
+           <div class="content-title span9">
+             <h1>infomap implentation continued</h1>
+           </div>
+      </div>
+    <div class="row-fluid">
+      <div class="span2">
+<p>Fri 14 August 2015 </p>
+
+<p style="text-align: left;">
+Filed under <a href="/category/gsoc.html">GSoC</a>
+</p>
+<p style="text-align: left;">
+ 
+    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/infomap.html">Infomap</a> <a href="/tag/map-equation.html">Map Equation</a> <a href="/tag/python.html">Python</a> </p>
+<p>
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+</p>
+      </div>
+      
+      <div class="span8">
+	<div class="section" id="week-friday-august-14-2015">
+<h2>Week Friday, August 14, 2015</h2>
+<div class="section" id="implementing-infomap">
+<h3>Implementing Infomap</h3>
+<p>Work has continued to implement the infomap algorithm assuming an undirected graph as input.
+For the complexity of the implementation it is &quot;lucky&quot; that the preprocessing (correlation, thresholding) currently carried out in CPAC and in Neuroimaging generally
+produces undirected graphs. Restricting the input of innfomap to unirected graphs simplifies the forumulation of the <strong>map equation</strong>.
+A detailed reasoning and derivation of it can be found in <a class="footnote-reference" href="#id2" id="id1">[1]</a> (Page 7)</p>
+<p>The current status of the implementation can always be found on github: <a class="reference external" href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap.py">https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap.py</a></p>
+</div>
+<div class="section" id="progress">
+<h3>Progress</h3>
+<p>Commit history can be found both in the fork of CPAC (<a class="reference external" href="https://github.com/roijo/C-PAC_complexitytools/commits/master/CPAC/community/algorithms">https://github.com/roijo/C-PAC_complexitytools/commits/master/CPAC/community/algorithms</a>) as well as own the private github for earlier iterations (<a class="reference external" href="https://github.com/flrgsr/community-detection/commits?author=flrgsr">https://github.com/flrgsr/community-detection/commits?author=flrgsr</a>) of the rewrite.</p>
+<p>This week was spend mainly on hunting down and fixing bugs.
+While for smaller test graphs the correct result could be obtaiend in comparison to the reference implementation it diverge in the case where larger graphs
+are given as an input.
+The source of this bug is however very much likely related to the bookkeeping logic around the main algorithm.</p>
+<p>As the intended deployment of this community detection algorithm as part of CPAC requires absolute reliability and stability across various input
+datasets the testing was assigned the highest priority.</p>
+</div>
+<div class="section" id="outlook">
+<h3>Outlook</h3>
+<ul class="simple">
+<li>Clearance of functional errors</li>
+<li>Introducing more regression tests in order to keep the code maintainable after merged with CPAC</li>
+<li>Detailed documentation of module</li>
+<li>Integration as coherent workflow/module into CPAC</li>
+</ul>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23. <a class="reference external" href="http://doi.org/10.1140/epjst/e2010-01179-1">http://doi.org/10.1140/epjst/e2010-01179-1</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+	<hr />
+      </div>
+    </div>
+    <div class="span10">
+      <h3>Comments</h3>
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'fgesserio'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>  
+    </div>
+        </div>
+        
+        
+    </div>     </div> </div>
+
+<!--footer-->
+<div class="container">
+  <div class="well" style="background-color: #E9EFF6">
+    <div id="blog-footer">
+      <div class="row-fluid">
+	<div class="social span2" align="center" id="socialist">
+	  <ul class="nav nav-list">
+	    <li class="nav-header">
+	      Social
+	    </li>
+	    <li><a href="http://twitter.com/flrgsr"><i class="icon-twitter" style="color: #1f334b"></i>twitter</a></li>
+	    <li><a href="http://github.com/flrgsr"><i class="icon-github" style="color: #1f334b"></i>github</a></li>
+
+	  </ul>
+	</div>
+        <div class="links span2" align="center">
+          <ul class="nav nav-list">
+            <li class="nav-header"> 
+              Links
+            </li>
+            
+            <li><a href="http://fcp-indi.github.io/">C-PAC Configurable Pipeline for the Analysis of Connectomes</a></li>
+          </ul>
+        </div>
+	<div class="site-nav span2" align="center">
+          <ul class="nav nav-list" id="site-links">
+            <li class="nav-header"> 
+              Site
+            </li>
+            <li><a href=""><i class="icon-home" style="color: #1f334b">
+                </i>Home</a></li>
+            <li><a href="/archives.html"><i class="icon-list" style="color: #1f334b">
+                </i>Archives</a></li>
+	    <li><a href="/tags.html"><i class="icon-tags" style="color: #1f334b">
+                </i>Tags</a></li>
+	    
+	  </ul>
+
+        </div>
+
+      </div> <!--end of fluid row-->
+    </div> <!--end of blog-footer-->
+    <hr />
+    <p align="center"><a href="">GSoC Blog C-PAC</a>
+      &copy; Florian Gesser
+    Powered by <a href="https://github.com/getpelican/pelican">Pelican</a> and
+        <a href="https://twitter.github.com/bootstrap">Twitter Bootstrap</a>. 
+        Icons by <a href="https://fortawesome.github.com/Font-Awesome">Font Awesome</a> and 
+        <a href="https://gregoryloucas.github.com/Font-Awesome-More">Font Awesome More</a></p>
+
+  </div> <!--end of well -->
+</div> <!--end of container -->
+
+<!--/footer-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+
+
+
+</body>
+</html>
