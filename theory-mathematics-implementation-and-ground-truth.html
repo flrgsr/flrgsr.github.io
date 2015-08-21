@@ -10,11 +10,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="" />
 <meta name="author" content="Florian Gesser" />
-<meta name="description" content="Introduction¶This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized" />
+<meta name="description" content="Introduction¶This and the last week has been intensively spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized" />
 <meta name="keywords" content="GSoC, Infomap, Map Equation, Python">
 <meta property="og:site_name" content="GSoC Blog C-PAC"/>
 <meta property="og:title" content="Theory, Mathematics, Implementation and Ground Truth"/>
-<meta property="og:description" content="Introduction¶This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized"/>
+<meta property="og:description" content="Introduction¶This and the last week has been intensively spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="/theory-mathematics-implementation-and-ground-truth.html"/>
 <meta property="og:type" content="article"/>
@@ -128,14 +128,14 @@
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm.
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>This and the last week has been intensively spent to debug and refine the implementation of the Infomap Algorithm.
 The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets.</p>
 <p>Fruthermore a test suite has been <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap_test.py">realized</a> which provides both regression tests for methods relevant to the algorithm as well as numerical verifications.</p>
-<p>This ensures a <code>robust</code> process if there are modifications to be made, refactorings conducted, or the code is simply to be maintained by anohter developer in the future.</p>
+<p>This ensures a robust process if there are modifications to be made, refactorings conducted, or the code is simply to be maintained by anohter developer in the future.</p>
 <p>The current status of the implementation can always be found on <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap.py">github</a> in the commmunity module.</p>
 <p>Commit history can be found both in the fork of <a href="https://github.com/roijo/C-PAC_complexitytools/commits/master/CPAC/community/algorithms">CPAC</a> as well as own my private github from earlier <a href="https://github.com/flrgsr/community-detection/commits?author=flrgsr">iterations</a> of the rewrite.</p>
 <h1 id="Theoretical-Background">Theoretical Background<a class="anchor-link" href="#Theoretical-Background">&#182;</a></h1><p>For the complexity of the implementation it is to our advantage that the preprocessing (correlation, thresholding) currently carried out in CPAC and in Neuroimaging generally produces undirected graphs. Restricting the input of innfomap to unirected graphs simplifies the forumulation of the <strong>map equation</strong>.</p>
-<blockquote><p>For undirected networks, the node visit frequency of node $\alpha$ simply corresponds to the relative weight $\omega_\alpha$ of the links connected to the node. The relative weight is the total weight of the links connected to the node divided by twice the total weight of all links in the network, which corres􏰓ponds to the total weight of all link-ends. <cite>(Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23.)</cite></p>
+<blockquote><p>For undirected networks, the node visit frequency of node $\alpha$ simply corresponds to the relative weight $\omega_\alpha$ of the links connected to the node. The relative weight is the total weight of the links connected to the node divided by twice the total weight of all links in the network, which corresponds to the total weight of all link-ends. <cite>(Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23.)</cite></p>
 </blockquote>
 <p>As this is the case for us, it simplifies the formulation of the <code>Map Equation</code> and setup.
 A further implication regarding the setup is that the computation of page rank becomes obsolete as the node visit frequencies are given by the relative weight. For more please refer to the Appendix down below. The computation of the exit node probability</p>
@@ -151,7 +151,7 @@ L(M) = \omega_{\curvearrowright} \log_2(\omega_{\curvearrowright}) - 2 \sum_{i=1
 <h1 id="The-Mathematics-and-Logic-of-the-Infomap-Algorithm">The Mathematics and Logic of the Infomap Algorithm<a class="anchor-link" href="#The-Mathematics-and-Logic-of-the-Infomap-Algorithm">&#182;</a></h1><p>Having the map equatuon above (equation \ref{mapeq}) established and in place, we now have to formulate the actual update we will perform while doing the greedy search for the minimum description length.</p>
 <p>The update refers to the calculation of the difference in the map equation that would occur if one node would move into the same community as one of it's neighbours. It is a crucial part of the algorithm and the heart of the optimization strategy.</p>
 <p>The formula on how to compute the difference in the map equation when doing the greedy search is derived from equation \ref{mapeq}, that is Eq. 5 in the original paper cites above.</p>
-<p>In corrospondence with one of the authors <a href="http://www.tp.umu.se/~rosvall/">Dr. Rosvall</a> was so kind to provide an illustration that illustrates the rational behind the derivation.</p>
+<p>In corrospondence with one of the authors <a href="http://www.tp.umu.se/~rosvall/">Dr. Rosvall</a> was so kind to provide a graphic that illustrates the rational behind the derivation.</p>
 <p><img src="images/infomap/Exitchange.jpeg"></p>
 <p>We note that the the third term in equation \ref{mapeq} is constant, so we really only need to keep track of the other three terms. Let the term <code>delta_exit</code>correspond to changes of the first term, <code>delta_exit_log_exit</code> to changes of the second term (except for the factor -2), and <code>delta_degree_log_degree</code> to changes of the fourth term. The two first terms only depend on the flow between modules. The variable <code>exit</code> will store the value of the first term in equation \ref{mapeq}. To calculate how much it changes by moving the particular node from one module to the other, one needs to figure out how much the total flow between module changes.</p>
 <p>Refering to the illustation above: <code>wfromM</code> is the total flow from the node to nodes in the module it is currently assigned to. <code>wfromM</code> is the total flow from the node to nodes in the module it will be assigned to. Since the flow is bidirectional, before the move <code>2wtoM</code> units of flow moved between the modules and after the move <code>2wfromM</code> units of flow will move between the modules. Therefore the change is <code>2wtoM - 2wfromM</code>. <strong>Note:</strong> The flows to other modules will not change the total flow between modules, such that the new flow between modules will be (if it previously was <code>exitDegree</code>): <code>exitDegree - 2*wtoM + 2*wfromM</code>. To calculate the change in code length from the first term in equation \ref{mapeq} one simply calculates <code>new code length - old code length</code>:</p>
@@ -221,6 +221,7 @@ which are essentially random in other respects.</p>
 <p>This is ensured by 1) visual inspection of the custers and 2) <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap_test.py#L101">numerical tests</a> for which community of node = node modulo 4 must hold according to the definition.</p>
 <p>In the following a visualization generated of the graph and it's correctly detected communiteis.</p>
 <p><img src="images/infomap/girvan_ground_truth.png"></p>
+<p><strong>Note:</strong> The visualization of the nodes 3, 65 and 70 as seemingly more far apart from the rest of the network is a purely random artifact and due to the nature of the graph drawing algorithm.</p>
 <h3 id="Zachary's-Karate-Club">Zachary's Karate Club<a class="anchor-link" href="#Zachary's-Karate-Club">&#182;</a></h3><p>Another (very famous) ground turth graph for which the infomap implementation identifies the same communities as the reference.</p>
 <p><img src="images/infomap/karate_correct.png"></p>
 <h3 id="Real-World-Brain-Imaging-Data">Real World Brain Imaging Data<a class="anchor-link" href="#Real-World-Brain-Imaging-Data">&#182;</a></h3><p>Lastly, we want to evaluate the results of the community detection via our infomap implementation over some real world data. For this purpose we used 29 subjects from the <a href="http://fcon_1000.projects.nitrc.org/indi/abide/">ABIDE dataset</a> (Yale Site).</p>
@@ -564,7 +565,7 @@ This figure depicts a plot of the community size distribution for one subject. T
   },
   "image": "{{ SITEURL }}/theme/img/profile.png",
   "url": "/theory-mathematics-implementation-and-ground-truth.html",
-  "description": "Introduction¶This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized"
+  "description": "Introduction¶This and the last week has been intensively spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized"
 }
 </script></body>
 </html>
