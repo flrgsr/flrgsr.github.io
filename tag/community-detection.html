@@ -1,537 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/font-awesome.min.css">
 
-    <meta charset="utf-8">
-    <title>GSoC Blog C-PAC <small>Community Detection</small></title>
-    <meta name="description" content="">
-    <meta name="author" content="Florian Gesser">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-    <script src="/theme/html5.js"></script>
-    <![endif]-->
-
-
-    <!-- Le styles -->
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
-    <link href="/theme/local.css" rel="stylesheet">
-    <link href="/theme/pygments.css" rel="stylesheet">
-    <link href="/theme/font-awesome.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Gudea:400,400italic|Alegreya+SC' rel='stylesheet' type='text/css'>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+  <meta name="author" content="Florian Gesser" />
+  <meta name="description" content="" />
+<meta property="og:site_name" content="GSoC Blog C-PAC"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="GSoC Blog C-PAC"/>
+<meta property="og:description" content=""/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content=""/>
+  <title>GSoC Blog C-PAC &ndash; Tag: Community Detection</title>
 </head>
-
 <body>
-<header class="blog-header">
-  <div class="container">
-    <div class="row-fluid">
-      <div class="span9">
-	<a href="" class="brand">GSoC Blog C-PAC</a>
-      </div>
-
-      <div class="span3" id="blog-nav">
-	<ul class="nav nav-pills pull-right">
-	    <li >
-	      <a href="/category/gsoc.html ">GSoC</a>
-	</ul>
-      </div>
-    </div> <!-- End of fluid row-->
-  </div>   <!-- End of Container-->
-</header>
-    
-<div class="container">
-    <div class="content">
-    <div class="row-fluid">
-
-        <div class="span10">
-        
-
-        
-
-    <div class='row-fluid''>
-        <div class="article-title span9">
-            <a href="/evaluating-community-detection-results.html"><h1>evaluating community detection results</h1></a>
-        </div>
+  <aside>
+    <div>
+      <a href="">
+        <img src="/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href=""></a></h1>
+      <p></p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://fcp-indi.github.io/" target="_blank">C-PAC Configurable Pipeline for the Analysis of Connectomes</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-twitter" href="http://twitter.com/flrgsr" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-github" href="http://github.com/flrgsr" target="_blank"><i class="fa fa-github"></i></a></li>
+      </ul>
     </div>
-    <div class="row-fluid">
-      <div class="span2">
-<p>Wed 15 July 2015 </p>
+  </aside>
+  <main>
 
-<p style="text-align: left;">
-Filed under <a href="/category/gsoc.html">GSoC</a>
-</p>
-<p style="text-align: left;">
- 
-    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/community-detection.html">Community Detection</a> </p>
-<p>
-<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-</p>
-      </div>
-      <div class="article-content span8">
-	<div class="section" id="introduction">
-<h2>Introduction</h2>
-<p>We want to evaluate the results of the community detection algorithm over some real world data.
-For this purpose we used 29 subjects from the ABIDE dataset (<a class="reference external" href="http://fcon_1000.projects.nitrc.org/indi/abide/">http://fcon_1000.projects.nitrc.org/indi/abide/</a>) (Yale Site).</p>
-<p>These 29 subjects have later been split up into 2 groups (n=14 and n=15) according to the behavioural meta data available within in the dataset.
-To concentrate on evaluating the community detection algorithm we made use of the preprocessed timeseries.
-These ROI's timeseries have been extracted according to the CC400 Atlas.</p>
-</div>
-<div class="section" id="automatization-and-mini-pipeline">
-<h2>Automatization and &quot;Mini Pipeline&quot;</h2>
-<p>In order to process and analyse the data in an automated manner a &quot;mini pipeline&quot; has been developed.</p>
-<div class="section" id="processing">
-<h3>Processing:</h3>
-<blockquote>
-<ul class="simple">
-<li>load the *.1D files from disk into a pandas data frame</li>
-<li>compute the correlation</li>
-<li>threshold the correlation matrix</li>
-<li>get a graph representation of the trehsolded adjacency matrix</li>
-<li>run the community detection algorithm on this graph</li>
-</ul>
-</blockquote>
-</div>
-<div class="section" id="analysis">
-<h3>Analysis:</h3>
-<blockquote>
-<ul class="simple">
-<li>compute and print out metrics of each detected community (size and number of nodes of each community)</li>
-<li>annotate the graph with the detected communites</li>
-<li>color code the nodes of the graph corresponding to the which communiy it belongs and plot the result</li>
-<li>compute the community size distribution per level and superimpose the result in one plot</li>
-<li>compute In-Degree/Out-Degree ratio per community</li>
-</ul>
-</blockquote>
-</div>
-</div>
-<div class="section" id="results">
-<h2>Results</h2>
-<p>By way of illustrating the computed plots for one subject are depicted in the following:</p>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/subject_0_community_network.png" />
-<p class="caption">Here we can see the rendered graph with its nodes color coded according to the community it belongs to.
-On the left side of the periphery of the circle we see a lot of the singletons (each node altering color form neighbour to neighbour).</p>
-</div>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/subject_0_community_size_distribution_level_2.png" />
-<p class="caption">This figure depicts a plot of the community size distribution for one subject.
-The commmunit detection algorithm computed a dendrogram of 3 levels (0-2).
-The community size distribution for each level is superimposed on each other in this plot.
-The figure exhibts a common pattern: The community size distrubtion follows approximately a declining exponential curve - a lot of small communites, less large ones.
-Referring  to figure 1 we see here clearly the large amount of singletons per level (approx. ~55 on level 2)</p>
-</div>
-<p>The plot was generated with the help of the pandas package and its powerful groupby function.</p>
-<div class="highlight"><pre><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="n">level</span><span class="p">,</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">dct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comm_map</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;level&#39;</span><span class="p">,</span> <span class="s">&#39;size&#39;</span><span class="p">])</span>
-<span class="n">size_count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;level&#39;</span><span class="p">])[</span><span class="s">&#39;size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
-<span class="n">size_count</span> <span class="o">=</span> <span class="n">size_count</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="n">size_count</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;level&#39;</span><span class="p">,</span> <span class="s">&#39;community size&#39;</span><span class="p">,</span> <span class="s">&#39;number of communities&#39;</span><span class="p">]</span>
-</pre></div>
-<div class="section" id="group-results">
-<h3>Group results</h3>
-<p>In the following depicts each boxplot the statistic about the community size distribution grouped per level</p>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/box_plot_group1.png" />
-<p class="caption">Results for Group 1</p>
-</div>
-<div class="figure">
-<img alt="" src="../images/community_evaluation/box_plot_group2.png" />
-<p class="caption">Results for Group 2</p>
-</div>
-</div>
-<div class="section" id="conclusion">
-<h3>Conclusion</h3>
-<p>Further investigations and experimentations with larger datasets or data extracted by an atlas which gives more ROI's are necessary to really see group differences.</p>
-</div>
-</div>
-<div class="section" id="appendix">
-<h2>Appendix</h2>
-<div class="section" id="raw-data-exemplified-for-group-1">
-<h3>Raw Data exemplified for Group 1</h3>
-<p>The above boxplot for Group 1 was generated from this dataframe.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="11%" />
-<col width="11%" />
-<col width="26%" />
-<col width="51%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">index</th>
-<th class="head">level</th>
-<th class="head">community size</th>
-<th class="head">average number of communities</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>0</td>
-<td>0</td>
-<td>1</td>
-<td>73.2647058824</td>
-</tr>
-<tr><td>1</td>
-<td>0</td>
-<td>2</td>
-<td>20.65</td>
-</tr>
-<tr><td>2</td>
-<td>0</td>
-<td>3</td>
-<td>12.325</td>
-</tr>
-<tr><td>3</td>
-<td>0</td>
-<td>4</td>
-<td>5.35</td>
-</tr>
-<tr><td>4</td>
-<td>0</td>
-<td>5</td>
-<td>3.7027027027</td>
-</tr>
-<tr><td>5</td>
-<td>0</td>
-<td>6</td>
-<td>2.58333333333</td>
-</tr>
-<tr><td>6</td>
-<td>0</td>
-<td>7</td>
-<td>1.64705882353</td>
-</tr>
-<tr><td>7</td>
-<td>0</td>
-<td>8</td>
-<td>1.72413793103</td>
-</tr>
-<tr><td>8</td>
-<td>0</td>
-<td>9</td>
-<td>2.0</td>
-</tr>
-<tr><td>9</td>
-<td>0</td>
-<td>10</td>
-<td>3.14285714286</td>
-</tr>
-<tr><td>10</td>
-<td>0</td>
-<td>11</td>
-<td>1.38461538462</td>
-</tr>
-<tr><td>11</td>
-<td>0</td>
-<td>12</td>
-<td>1.0</td>
-</tr>
-<tr><td>12</td>
-<td>0</td>
-<td>13</td>
-<td>1.4</td>
-</tr>
-<tr><td>13</td>
-<td>0</td>
-<td>14</td>
-<td>1.38461538462</td>
-</tr>
-<tr><td>14</td>
-<td>0</td>
-<td>15</td>
-<td>1.0</td>
-</tr>
-<tr><td>15</td>
-<td>0</td>
-<td>16</td>
-<td>1.5</td>
-</tr>
-<tr><td>16</td>
-<td>0</td>
-<td>17</td>
-<td>1.0</td>
-</tr>
-<tr><td>17</td>
-<td>0</td>
-<td>18</td>
-<td>1.0</td>
-</tr>
-<tr><td>18</td>
-<td>0</td>
-<td>19</td>
-<td>2.0</td>
-</tr>
-<tr><td>19</td>
-<td>0</td>
-<td>20</td>
-<td>1.27272727273</td>
-</tr>
-<tr><td>20</td>
-<td>0</td>
-<td>21</td>
-<td>1.0</td>
-</tr>
-<tr><td>21</td>
-<td>0</td>
-<td>22</td>
-<td>1.0</td>
-</tr>
-<tr><td>22</td>
-<td>0</td>
-<td>23</td>
-<td>1.2</td>
-</tr>
-<tr><td>23</td>
-<td>0</td>
-<td>24</td>
-<td>1.0</td>
-</tr>
-<tr><td>24</td>
-<td>0</td>
-<td>25</td>
-<td>1.0</td>
-</tr>
-<tr><td>25</td>
-<td>0</td>
-<td>26</td>
-<td>1.0</td>
-</tr>
-<tr><td>26</td>
-<td>0</td>
-<td>27</td>
-<td>1.0</td>
-</tr>
-<tr><td>27</td>
-<td>0</td>
-<td>28</td>
-<td>1.0</td>
-</tr>
-<tr><td>28</td>
-<td>0</td>
-<td>29</td>
-<td>1.0</td>
-</tr>
-<tr><td>29</td>
-<td>0</td>
-<td>30</td>
-<td>1.0</td>
-</tr>
-<tr><td>30</td>
-<td>0</td>
-<td>31</td>
-<td>1.0</td>
-</tr>
-<tr><td>31</td>
-<td>0</td>
-<td>32</td>
-<td>1.0</td>
-</tr>
-<tr><td>32</td>
-<td>0</td>
-<td>33</td>
-<td>1.0</td>
-</tr>
-<tr><td>33</td>
-<td>0</td>
-<td>36</td>
-<td>1.0</td>
-</tr>
-<tr><td>34</td>
-<td>0</td>
-<td>37</td>
-<td>1.0</td>
-</tr>
-<tr><td>35</td>
-<td>0</td>
-<td>39</td>
-<td>1.0</td>
-</tr>
-<tr><td>36</td>
-<td>0</td>
-<td>41</td>
-<td>1.0</td>
-</tr>
-<tr><td>37</td>
-<td>0</td>
-<td>44</td>
-<td>1.0</td>
-</tr>
-<tr><td>38</td>
-<td>0</td>
-<td>45</td>
-<td>1.0</td>
-</tr>
-<tr><td>39</td>
-<td>0</td>
-<td>46</td>
-<td>1.0</td>
-</tr>
-<tr><td>40</td>
-<td>0</td>
-<td>50</td>
-<td>1.0</td>
-</tr>
-<tr><td>41</td>
-<td>0</td>
-<td>52</td>
-<td>1.0</td>
-</tr>
-<tr><td>42</td>
-<td>0</td>
-<td>53</td>
-<td>1.0</td>
-</tr>
-<tr><td>43</td>
-<td>0</td>
-<td>62</td>
-<td>1.0</td>
-</tr>
-<tr><td>44</td>
-<td>1</td>
-<td>1</td>
-<td>73.325</td>
-</tr>
-<tr><td>45</td>
-<td>1</td>
-<td>2</td>
-<td>5.225</td>
-</tr>
-<tr><td>46</td>
-<td>1</td>
-<td>3</td>
-<td>4.2</td>
-</tr>
-<tr><td>47</td>
-<td>1</td>
-<td>4</td>
-<td>2.72413793103</td>
-</tr>
-<tr><td>48</td>
-<td>1</td>
-<td>5</td>
-<td>2.28571428571</td>
-</tr>
-<tr><td>49</td>
-<td>1</td>
-<td>6</td>
-<td>1.5</td>
-</tr>
-<tr><td>50</td>
-<td>1</td>
-<td>7</td>
-<td>1.0</td>
-</tr>
-<tr><td>51</td>
-<td>1</td>
-<td>8</td>
-<td>1.0</td>
-</tr>
-<tr><td>52</td>
-<td>1</td>
-<td>15</td>
-<td>1.0</td>
-</tr>
-<tr><td>53</td>
-<td>2</td>
-<td>1</td>
-<td>84.9166666667</td>
-</tr>
-<tr><td>54</td>
-<td>2</td>
-<td>2</td>
-<td>1.83333333333</td>
-</tr>
-<tr><td>55</td>
-<td>2</td>
-<td>3</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
- 
-	<a class="btn btn-mini xsmall" href="/evaluating-community-detection-results.html">
-          <i class="icon-comment"></i> Comment </a>
-	<hr />
-      </div>
+<article>
+  <header>
+    <h2><a href="/evaluating-community-detection-results.html#evaluating-community-detection-results">Evaluating community detection results</a></h2>
+    <p>
+      Posted on Wed 15 July 2015 in <a href="/category/gsoc.html">GSoC</a> &#8226;
+Tagged with
+      <a href="/tag/gsoc.html">GSoC</a>,      <a href="/tag/community-detection.html">Community Detection</a>      &#8226; <a href="/evaluating-community-detection-results.html#disqus_thread">Leave a comment</a>
+    </p>
+  </header>
+  <div>
       
-    </div>
-    
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+      <a class="btn" href="/evaluating-community-detection-results.html#evaluating-community-detection-results">Continue reading</a>
+  </div>
+</article>
 
-    <li class="active"><a href="/tag/community-detection.html">1</a></li>
+  <div class="pagination">
+  </div>
 
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
-        </div>
-        
-        
-    </div>     </div> </div>
-
-<!--footer-->
-<div class="container">
-  <div class="well" style="background-color: #E9EFF6">
-    <div id="blog-footer">
-      <div class="row-fluid">
-	<div class="social span2" align="center" id="socialist">
-	  <ul class="nav nav-list">
-	    <li class="nav-header">
-	      Social
-	    </li>
-	    <li><a href="http://twitter.com/flrgsr"><i class="icon-twitter" style="color: #1f334b"></i>twitter</a></li>
-	    <li><a href="http://github.com/flrgsr"><i class="icon-github" style="color: #1f334b"></i>github</a></li>
-
-	  </ul>
-	</div>
-        <div class="links span2" align="center">
-          <ul class="nav nav-list">
-            <li class="nav-header"> 
-              Links
-            </li>
-            
-            <li><a href="http://fcp-indi.github.io/">C-PAC Configurable Pipeline for the Analysis of Connectomes</a></li>
-          </ul>
-        </div>
-	<div class="site-nav span2" align="center">
-          <ul class="nav nav-list" id="site-links">
-            <li class="nav-header"> 
-              Site
-            </li>
-            <li><a href=""><i class="icon-home" style="color: #1f334b">
-                </i>Home</a></li>
-            <li><a href="/archives.html"><i class="icon-list" style="color: #1f334b">
-                </i>Archives</a></li>
-	    <li><a href="/tags.html"><i class="icon-tags" style="color: #1f334b">
-                </i>Tags</a></li>
-	    
-	  </ul>
-
-        </div>
-
-      </div> <!--end of fluid row-->
-    </div> <!--end of blog-footer-->
-    <hr />
-    <p align="center"><a href="">GSoC Blog C-PAC</a>
-      &copy; Florian Gesser
-    Powered by <a href="https://github.com/getpelican/pelican">Pelican</a> and
-        <a href="https://twitter.github.com/bootstrap">Twitter Bootstrap</a>. 
-        Icons by <a href="https://fortawesome.github.com/Font-Awesome">Font Awesome</a> and 
-        <a href="https://gregoryloucas.github.com/Font-Awesome-More">Font Awesome More</a></p>
-
-  </div> <!--end of well -->
-</div> <!--end of container -->
-
-<!--/footer-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-
-
-
+    <footer>
+      <p>&copy; Florian Gesser </p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " GSoC Blog C-PAC ",
+  "url" : "",
+  "image": "",
+  "description": ""
+}
+</script><script type="text/javascript">
+    var disqus_shortname = 'fgesserio';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
 </body>
 </html>

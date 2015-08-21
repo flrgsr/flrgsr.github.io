@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/font-awesome.min.css">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+<meta name="author" content="Florian Gesser" />
+<meta name="description" content="Introduction¶This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized" />
+<meta name="keywords" content="GSoC, Infomap, Map Equation, Python">
+<meta property="og:site_name" content="GSoC Blog C-PAC"/>
+<meta property="og:title" content="Theory, Mathematics, Implementation and Ground Truth"/>
+<meta property="og:description" content="Introduction¶This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="/infomap-part-II.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-08-20 00:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="/author/florian-gesser.html">
+<meta property="article:section" content="GSoC"/>
+<meta property="article:tag" content="GSoC"/>
+<meta property="article:tag" content="Infomap"/>
+<meta property="article:tag" content="Map Equation"/>
+<meta property="article:tag" content="Python"/>
+<meta property="og:image" content="">  <title>GSoC Blog C-PAC &ndash; Theory, Mathematics, Implementation and Ground Truth</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="">
+        <img src="/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href=""></a></h1>
+      <p></p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://fcp-indi.github.io/" target="_blank">C-PAC Configurable Pipeline for the Analysis of Connectomes</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-twitter" href="http://twitter.com/flrgsr" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-github" href="http://github.com/flrgsr" target="_blank"><i class="fa fa-github"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="infomap-part-II">Theory, Mathematics, Implementation and Ground Truth</h1>
+    <p>Posted on Thu 20 August 2015 in <a href="/category/gsoc.html">GSoC</a></p>
+  </header>
+  <div>
+    <style type="text/css">/*!
+*
+* IPython notebook
+*
+*/.ansibold{font-weight:bold}.ansiblack{color:black}.ansired{color:darkred}.ansigreen{color:darkgreen}.ansiyellow{color:#c4a000}.ansiblue{color:darkblue}.ansipurple{color:darkviolet}.ansicyan{color:steelblue}.ansigray{color:gray}.ansibgblack{background-color:black}.ansibgred{background-color:red}.ansibggreen{background-color:green}.ansibgyellow{background-color:yellow}.ansibgblue{background-color:blue}.ansibgpurple{background-color:magenta}.ansibgcyan{background-color:cyan}.ansibggray{background-color:gray}div.cell{border:1px solid transparent;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch;border-radius:2px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;border-width:thin;border-style:solid;width:100%;padding:5px;margin:0;outline:none}div.cell.selected{border-color:#ababab}@media print{div.cell.selected{border-color:transparent}}.edit_mode div.cell.selected{border-color:green}@media print{.edit_mode div.cell.selected{border-color:transparent}}.prompt{min-width:14ex;padding:.4em;margin:0;font-family:monospace;text-align:right;line-height:1.21429em}@media (max-width:540px){.prompt{text-align:left}}div.inner_cell{display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch;-webkit-box-flex:1;-moz-box-flex:1;box-flex:1;flex:1}@-moz-document url-prefix(){div.inner_cell{overflow-x:hidden}}div.input_area{border:1px solid #cfcfcf;border-radius:2px;background:#f7f7f7;line-height:1.21429em}div.prompt:empty{padding-top:0;padding-bottom:0}div.unrecognized_cell{padding:5px 5px 5px 0;display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}div.unrecognized_cell .inner_cell{border-radius:2px;padding:5px;font-weight:bold;color:red;border:1px solid #cfcfcf;background:#eaeaea}div.unrecognized_cell .inner_cell a{color:inherit;text-decoration:none}div.unrecognized_cell .inner_cell a:hover{color:inherit;text-decoration:none}@media (max-width:540px){div.unrecognized_cell>div.prompt{display:none}}@media print{div.code_cell{page-break-inside:avoid}}div.input{page-break-inside:avoid;display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}@media (max-width:540px){div.input{display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch}}div.input_prompt{color:navy;border-top:1px solid transparent}div.input_area>div.highlight{margin:.4em;border:none;padding:0;background-color:transparent}div.input_area>div.highlight>pre{margin:0;border:none;padding:0;background-color:transparent}.CodeMirror{line-height:1.21429em;font-size:14px;height:auto;background:none}.CodeMirror-scroll{overflow-y:hidden;overflow-x:auto}.CodeMirror-lines{padding:.4em}.CodeMirror-linenumber{padding:0 8px 0 4px}.CodeMirror-gutters{border-bottom-left-radius:2px;border-top-left-radius:2px}.CodeMirror pre{padding:0;border:0;border-radius:0}.highlight-base{}.highlight-variable{}.highlight-variable-2{color:#1a1a1a}.highlight-variable-3{color:#333}.highlight-string{color:#ba2121}.highlight-comment{color:#408080;font-style:italic}.highlight-number{80}.highlight-atom{color:#88f}.highlight-keyword{8000;font-weight:bold}.highlight-builtin{8000}.highlight-error{color:#f00}.highlight-operator{color:#a2f;font-weight:bold}.highlight-meta{color:#a2f}.highlight-def{f}.highlight-string-2{color:#f50}.highlight-qualifier{color:#555}.highlight-bracket{color:#997}.highlight-tag{color:#170}.highlight-attribute{c}.highlight-header{color:blue}.highlight-quote{90}.highlight-link{c}.cm-s-ipython span.cm-keyword{8000;font-weight:bold}.cm-s-ipython span.cm-atom{color:#88f}.cm-s-ipython span.cm-number{80}.cm-s-ipython span.cm-def{f}.cm-s-ipython span.cm-variable{}.cm-s-ipython span.cm-operator{color:#a2f;font-weight:bold}.cm-s-ipython span.cm-variable-2{color:#1a1a1a}.cm-s-ipython span.cm-variable-3{color:#333}.cm-s-ipython span.cm-comment{color:#408080;font-style:italic}.cm-s-ipython span.cm-string{color:#ba2121}.cm-s-ipython span.cm-string-2{color:#f50}.cm-s-ipython span.cm-meta{color:#a2f}.cm-s-ipython span.cm-qualifier{color:#555}.cm-s-ipython span.cm-builtin{8000}.cm-s-ipython span.cm-bracket{color:#997}.cm-s-ipython span.cm-tag{color:#170}.cm-s-ipython span.cm-attribute{c}.cm-s-ipython span.cm-header{color:blue}.cm-s-ipython span.cm-quote{90}.cm-s-ipython span.cm-link{c}.cm-s-ipython span.cm-error{color:#f00}.cm-s-ipython span.cm-tab{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);background-position:right;background-repeat:no-repeat}div.output_wrapper{position:relative;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch;z-index:1}div.output_scroll{height:24em;width:100%;overflow:auto;border-radius:2px;-webkit-box-shadow:inset 0 2px 8px rgba(0,0,0,0.8);box-shadow:inset 0 2px 8px rgba(0,0,0,0.8);display:block}div.output_collapsed{margin:0;padding:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch}div.out_prompt_overlay{height:100%;padding:0 .4em;position:absolute;border-radius:2px}div.out_prompt_overlay:hover{-webkit-box-shadow:inset 0 0 1px #000;box-shadow:inset 0 0 1px #000;background:rgba(240,240,240,0.5)}div.output_prompt{color:darkred}div.output_area{padding:0;page-break-inside:avoid;display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}div.output_area .MathJax_Display{text-align:left !important}div.output_area div.output_area div.output_area img,div.output_area svg{max-width:100%;height:auto}div.output_area img.unconfined,div.output_area svg.unconfined{max-width:none}.output{display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch}@media (max-width:540px){div.output_area{display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch}}div.output_area pre{margin:0;padding:0;border:0;vertical-align:baseline;color:black;background-color:transparent;border-radius:0}div.output_subarea{overflow-x:auto;padding:.4em;-webkit-box-flex:1;-moz-box-flex:1;box-flex:1;flex:1;max-width:calc(100% - 14ex)}div.output_text{text-align:left;line-height:1.21429em}div.output_stderr{background:#fdd}div.output_latex{text-align:left}div.output_javascript:empty{padding:0}.js-error{color:darkred}div.raw_input_container{font-family:monospace;padding-top:5px}input.raw_input{font-family:inherit;font-size:inherit;color:inherit;width:auto;vertical-align:baseline;padding:0 .25em;margin:0 .25em}input.raw_input:focus{box-shadow:none}p.p-space{margin-bottom:10px}div.output_unrecognized{padding:5px;font-weight:bold;color:red}div.output_unrecognized a{color:inherit;text-decoration:none}div.output_unrecognized a:hover{color:inherit;text-decoration:none}.rendered_html{}.rendered_html :link{text-decoration:underline}.rendered_html :visited{text-decoration:underline}.rendered_html h1:first-child{margin-top:.538em}.rendered_html h2:first-child{margin-top:.636em}.rendered_html h3:first-child{margin-top:.777em}.rendered_html h4:first-child{margin-top:1em}.rendered_html h5:first-child{margin-top:1em}.rendered_html h6:first-child{margin-top:1em}.rendered_html *+ul{margin-top:1em}.rendered_html *+ol{margin-top:1em}.rendered_html *+table{margin-top:1em}.rendered_html *+p{margin-top:1em}.rendered_html *+img{margin-top:1em}div.text_cell{display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}@media (max-width:540px){div.text_cell>div.prompt{display:none}}div.text_cell_render{outline:none;resize:none;width:inherit;border-style:none;padding:.5em .5em .5em .4em;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}a.anchor-link:link{text-decoration:none;padding:0 20px;visibility:hidden}h1:hover .anchor-link,h2:hover .anchor-link,h3:hover .anchor-link,h4:hover .anchor-link,h5:hover .anchor-link,h6:hover .anchor-link{visibility:visible}.text_cell.rendered .input_area{display:none}.text_cell.rendered .text_cell.unrendered .text_cell_render{display:none}.cm-header-1,.cm-header-2,.cm-header-3,.cm-header-4,.cm-header-5,.cm-header-6{font-weight:bold;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}.cm-header-1{font-size:185.7%}.cm-header-2{font-size:157.1%}.cm-header-3{font-size:128.6%}.cm-header-4{font-size:110%}.cm-header-5{font-size:100%;font-style:italic}.cm-header-6{font-size:100%;font-style:italic}.widget-interact>div,.widget-interact>input{padding:2.5px}.widget-area{page-break-inside:avoid;display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}.widget-area .widget-subarea{padding:.44em .4em .4em 1px;margin-left:6px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch;-webkit-box-flex:2;-moz-box-flex:2;box-flex:2;flex:2;-webkit-box-align:start;-moz-box-align:start;box-align:start;align-items:flex-start}.widget-area.connection-problems .prompt:after{content:"\f127";font-family:'FontAwesome';color:#d9534f;font-size:14px;top:3px;padding:3px}.slide-track{border:1px solid #ccc;background:#fff;border-radius:2px}.widget-hslider{padding-left:8px;padding-right:2px;overflow:visible;width:350px;height:5px;max-height:5px;margin-top:13px;margin-bottom:10px;border:1px solid #ccc;background:#fff;border-radius:2px;display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}.widget-hslider .ui-slider{border:0;background:none;display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch;-webkit-box-flex:1;-moz-box-flex:1;box-flex:1;flex:1}.widget-hslider .ui-slider .ui-slider-handle{width:12px;height:28px;margin-top:-8px;border-radius:2px}.widget-hslider .ui-slider .ui-slider-range{height:12px;margin-top:-4px;background:#eee}.widget-vslider{padding-bottom:5px;overflow:visible;width:5px;max-width:5px;height:250px;margin-left:12px;border:1px solid #ccc;background:#fff;border-radius:2px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch}.widget-vslider .ui-slider{border:0;background:none;margin-left:-4px;margin-top:5px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch;-webkit-box-flex:1;-moz-box-flex:1;box-flex:1;flex:1}.widget-vslider .ui-slider .ui-slider-handle{width:28px;height:12px;margin-left:-9px;border-radius:2px}.widget-vslider .ui-slider .ui-slider-range{width:12px;margin-left:-1px;background:#eee}.widget-text{width:350px;margin:0}.widget-listbox{width:350px;margin-bottom:0}.widget-numeric-text{width:150px;margin:0}.widget-progress{margin-top:6px;min-width:350px}.widget-progress .progress-bar{-webkit-transition:none;-moz-transition:none;-ms-transition:none;-o-transition:none;transition:none}.widget-combo-btn{min-width:125px}.widget_item .dropdown-menu li a{color:inherit}.widget-hbox{display:-webkit-box;-webkit-box-orient:horizontal;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:horizontal;-moz-box-align:stretch;display:box;box-orient:horizontal;box-align:stretch;display:flex;flex-direction:row;align-items:stretch}.widget-hbox input[type="checkbox"]{margin-top:9px;margin-bottom:10px}.widget-hbox .widget-label{min-width:10ex;padding-right:8px;padding-top:5px;text-align:right;vertical-align:text-top}.widget-hbox .widget-readout{padding-left:8px;padding-top:5px;text-align:left;vertical-align:text-top}.widget-vbox{display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch}.widget-vbox .widget-label{padding-bottom:5px;text-align:center;vertical-align:text-bottom}.widget-vbox .widget-readout{padding-top:5px;text-align:center;vertical-align:text-top}.widget-box{box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;-webkit-box-align:start;-moz-box-align:start;box-align:start;align-items:flex-start}.widget-radio-box{display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-align:stretch;display:-moz-box;-moz-box-orient:vertical;-moz-box-align:stretch;display:box;box-orient:vertical;box-align:stretch;display:flex;flex-direction:column;align-items:stretch;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;padding-top:4px}.widget-radio-box label{margin-top:0;margin-left:20px}</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm.
+The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets.</p>
+<p>Fruthermore a test suite has been <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap_test.py">realized</a> which provides both regression tests for methods relevant to the algorithm as well as numerical verifications.</p>
+<p>This ensures a <code>robust</code> process if there are modifications to be made, refactorings conducted, or the code is simply to be maintained by anohter developer in the future.</p>
+<p>The current status of the implementation can always be found on <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap.py">github</a> in the commmunity module.</p>
+<p>Commit history can be found both in the fork of <a href="https://github.com/roijo/C-PAC_complexitytools/commits/master/CPAC/community/algorithms">CPAC</a> as well as own my private github from earlier <a href="https://github.com/flrgsr/community-detection/commits?author=flrgsr">iterations</a> of the rewrite.</p>
+<h1 id="Theoretical-Background">Theoretical Background<a class="anchor-link" href="#Theoretical-Background">&#182;</a></h1><p>For the complexity of the implementation it is to our advantage that the preprocessing (correlation, thresholding) currently carried out in CPAC and in Neuroimaging generally produces undirected graphs. Restricting the input of innfomap to unirected graphs simplifies the forumulation of the <strong>map equation</strong>.</p>
+<blockquote><p>For undirected networks, the node visit frequency of node $\alpha$ simply corresponds to the relative weight $\omega_\alpha$ of the links connected to the node. The relative weight is the total weight of the links connected to the node divided by twice the total weight of all links in the network, which corres􏰓ponds to the total weight of all link-ends. <cite>(Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23.)</cite></p>
+</blockquote>
+<p>As this is the case for us, it simplifies the formulation of the <code>Map Equation</code> and setup.
+A further implication regarding the setup is that the computation of page rank becomes obsolete as the node visit frequencies are given by the relative weight. For more please refer to the Appendix down below. The computation of the exit node probability</p>
+\begin{equation}
+q_{i\curvearrowright} = \tau \frac{n-n_i}{n} \sum_{\alpha\in i} p_\alpha + (1 -\tau ) \sum_{\alpha \in i} \sum_{\beta \notin i} p_\alpha  \omega_{\alpha\beta}$
+\end{equation}<p>is simplified as $q_{i\curvearrowright}$ becomes $\omega_{\curvearrowright}$ and the teleportation terms can be ignored:</p>
+<p>$\omega_{i\curvearrowright}$ for the relative weight of links exiting module $i$, and then $\omega_{\curvearrowright}􏰐 = \sum_{i=1}^{m} \omega_{i\curvearrowright}􏰐$ for the total relative weight of links between modules.</p>
+<p>The table in the Appendix at the end of the document bewlow shows the difference between the two approaches exemplified by using the infamous <code>karate network</code>.</p>
+<p>Our <code>Map equation</code> becomes then eventually:</p>
+\begin{equation} \label{mapeq}
+L(M) = \omega_{\curvearrowright} \log_2(\omega_{\curvearrowright}) - 2 \sum_{i=1}^{m} \omega_{i\curvearrowright}􏰐 \log_2(\omega_{i\curvearrowright}) - \sum_{\alpha=1}^{n} \omega_{\alpha} \log_2(\omega_{\alpha}) + \sum_{i=1}^{m} (\omega_{i\curvearrowright}􏰐 + \omega_i) \log_2(\omega_{i\curvearrowright} + \omega_i)
+\end{equation}<p>A detailed reasoning and derivation of it can be found in <sup class="footnote-ref" id="fnref-1"><a href="#fn-1" rel="footnote">1</a></sup> (Page 7)</p>
+<h1 id="The-Mathematics-and-Logic-of-the-Infomap-Algorithm">The Mathematics and Logic of the Infomap Algorithm<a class="anchor-link" href="#The-Mathematics-and-Logic-of-the-Infomap-Algorithm">&#182;</a></h1><p>Having the map equatuon above (equation \ref{mapeq}) established and in place, we now have to formulate the actual update we will perform while doing the greedy search for the minimum description length.</p>
+<p>The update refers to the calculation of the difference in the map equation that would occur if one node would move into the same community as one of it's neighbours. It is a crucial part of the algorithm and the heart of the optimization strategy.</p>
+<p>The formula on how to compute the difference in the map equation when doing the greedy search is derived from equation \ref{mapeq}, that is Eq. 5 in the original paper cites above.</p>
+<p>In corrospondence with one of the authors <a href="http://www.tp.umu.se/~rosvall/">Dr. Rosvall</a> was so kind to provide an illustration that illustrates the rational behind the derivation.</p>
+<p><img src="images/infomap/Exitchange.jpeg"></p>
+<p>We note that the the third term in equation \ref{mapeq} is constant, so we really only need to keep track of the other three terms. Let the term <code>delta_exit</code>correspond to changes of the first term, <code>delta_exit_log_exit</code> to changes of the second term (except for the factor -2), and <code>delta_degree_log_degree</code> to changes of the fourth term. The two first terms only depend on the flow between modules. The variable <code>exit</code> will store the value of the first term in equation \ref{mapeq}. To calculate how much it changes by moving the particular node from one module to the other, one needs to figure out how much the total flow between module changes.</p>
+<p>Refering to the illustation above: <code>wfromM</code> is the total flow from the node to nodes in the module it is currently assigned to. <code>wfromM</code> is the total flow from the node to nodes in the module it will be assigned to. Since the flow is bidirectional, before the move <code>2wtoM</code> units of flow moved between the modules and after the move <code>2wfromM</code> units of flow will move between the modules. Therefore the change is <code>2wtoM - 2wfromM</code>. <strong>Note:</strong> The flows to other modules will not change the total flow between modules, such that the new flow between modules will be (if it previously was <code>exitDegree</code>): <code>exitDegree - 2*wtoM + 2*wfromM</code>. To calculate the change in code length from the first term in equation \ref{mapeq} one simply calculates <code>new code length - old code length</code>:</p>
+\begin{equation}
+\Delta_{Exit} = (exitDegree - 2wtoM + 2wfromM) \log_2 (exitDegree - 2wtoM + 2wfromM) - exit
+\end{equation}<p>or in code:</p>
+<p><code>delta_exit = plogp(exitDegree - 2*wtoM + 2*wfromM) - exit</code></p>
+<p>The remaining terms are derived by analogus reasoning.</p>
+<h1 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h1><p>This core computations can be found in my implementation at the github repo withing the method <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap.py#L202">determine_best_new_module</a>.</p>
+<p>Here an excerpt of this core part:</p>
+<div class="highlight"><pre><span class="n">node_i_exit</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">pick</span><span class="p">][</span><span class="n">EXIT</span><span class="p">]</span>
+<span class="n">node_i_degree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">pick</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s">&quot;weight&quot;</span><span class="p">)</span>
+
+<span class="n">delta_exit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exitDegree</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wtoM</span> <span class="o">+</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wfromM</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span>
+
+<span class="n">delta_exit_log_exit</span> <span class="o">=</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>                               \
+                      <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">toM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>                                 \
+                      <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">-</span> <span class="n">node_i_exit</span> <span class="o">+</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wfromM</span><span class="p">)</span>      \
+                      <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">toM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="n">node_i_exit</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wtoM</span><span class="p">)</span>
+
+<span class="n">delta_degree_log_degree</span> <span class="o">=</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span><span class="n">correction</span> <span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span><span class="n">correction</span><span class="p">])</span>                                          \
+                          <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">toM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">toM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>                                              \
+                          <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span><span class="n">correction</span> <span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span><span class="n">correction</span><span class="p">]</span> <span class="o">-</span> <span class="n">node_i_exit</span> <span class="o">-</span> <span class="n">node_i_degree</span> <span class="o">+</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wfromM</span><span class="p">)</span> \
+                          <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">toM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">toM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="n">node_i_exit</span> <span class="o">+</span> <span class="n">node_i_degree</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wtoM</span><span class="p">)</span>
+
+<span class="n">deltaL</span> <span class="o">=</span> <span class="n">delta_exit</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">delta_exit_log_exit</span> <span class="o">+</span> <span class="n">delta_degree_log_degree</span>
+</pre></div>
+<p>Simimlar then when the node is about to be moved into the neighbour community detrmined which minimizes the description length the most the updates are as follows:</p>
+<div class="highlight"><pre><span class="n">node_i_exit</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">pick</span><span class="p">][</span><span class="n">EXIT</span><span class="p">]</span>
+<span class="n">node_i_degree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">pick</span><span class="p">)</span>
+
+
+<span class="bp">self</span><span class="o">.</span><span class="n">exitDegree</span>        <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">exit_log_exit</span>     <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">degree_log_degree</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span>    <span class="o">-=</span> <span class="n">node_i_exit</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span><span class="n">wfromM</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span>  <span class="o">-=</span> <span class="n">node_i_degree</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span>    <span class="o">+=</span> <span class="n">node_i_exit</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span><span class="n">best_weight</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span>  <span class="o">+=</span> <span class="n">node_i_degree</span>
+
+
+<span class="bp">self</span><span class="o">.</span><span class="n">exitDegree</span>        <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">exit_log_exit</span>     <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">fromM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_exit</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>
+<span class="n">correction</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_degree</span><span class="p">[</span><span class="n">bestM</span> <span class="o">+</span> <span class="n">correction</span><span class="p">])</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">exit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plogp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exitDegree</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">code_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit_log_exit</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree_log_degree</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodeDegree_log_nodeDegree</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">pick</span><span class="p">]</span> <span class="o">=</span> <span class="n">bestM</span>
+</pre></div>
+<p>With the right data structures these concepts can be expressed almost naturally in code.</p>
+<h1 id="Empirical-Tests-With-Ground-Truth-Graphs">Empirical Tests With Ground Truth Graphs<a class="anchor-link" href="#Empirical-Tests-With-Ground-Truth-Graphs">&#182;</a></h1><p>In the context of evaluating/debugging the implementation, data with attached ground truth is necessary.
+For more backgroud please refer to the <code>The Many Truths of Community Detection</code> (Community detection in networks: Structural communities versus ground truth)<sup class="footnote-ref" id="fnref-2"><a href="#fn-2" rel="footnote">2</a></sup>.</p>
+<h3 id="Girvan-ground-truth-graphs">Girvan ground truth graphs<a class="anchor-link" href="#Girvan-ground-truth-graphs">&#182;</a></h3><p>Girvan <sup class="footnote-ref" id="fnref-3"><a href="#fn-3" rel="footnote">3</a></sup>, describes in his paper a method of creating artificial ground truth graphs for testing of community detection algorithms.</p>
+<p>The graph was constructed with 128 vertices divided into four communities
+of 32 vertices each. Edges were placed between vertex pairs
+independently at random, with probability P_in for vertices belonging
+to the same community and P_out for vertices in different
+communities, with P_out &lt;  P_in. The probabilities were chosen so
+as to keep the average degree z of a vertex equal to 16. This
+produces graphs that have known community structure, but
+which are essentially random in other respects.</p>
+<p>Depicted is such an automatical created graph as it is <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap_test.py#L10">implemented in the test suite for the infomap implemention</a> with 4 communities. The implemented infomap algorithm correctly identifies these 4 communities and colors the node associations accordingly.</p>
+<p>This is ensured by 1) visual inspection of the custers and 2) <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap_test.py#L101">numerical tests</a> for which community of node = node modulo 4 must hold according to the definition.</p>
+<p>In the following a visualization generated of the graph and it's correctly detected communiteis.</p>
+<p><img src="images/infomap/girvan_ground_truth.png"></p>
+<h3 id="Zachary's-Karate-Club">Zachary's Karate Club<a class="anchor-link" href="#Zachary's-Karate-Club">&#182;</a></h3><p>Another (very famous) ground turth graph for which the infomap implementation identifies the same communities as the reference.</p>
+<p><img src="images/infomap/karate_correct.png"></p>
+<h3 id="Real-World-Brain-Imaging-Data">Real World Brain Imaging Data<a class="anchor-link" href="#Real-World-Brain-Imaging-Data">&#182;</a></h3><p>Lastly, we want to evaluate the results of the community detection via our infomap implementation over some real world data. For this purpose we used 29 subjects from the <a href="http://fcon_1000.projects.nitrc.org/indi/abide/">ABIDE dataset</a> (Yale Site).</p>
+<p>These 29 subjects have later been split up into 2 groups (n=14 and n=15) according to the behavioural meta data available within in the dataset. To concentrate on evaluating the community detection algorithm we made use of the preprocessed timeseries. These ROI's timeseries have been extracted according to the CC400 Atlas.</p>
+<p>Of course here no ground truth data is available. For this we compute various analytical metrics to verify the plausiblity.</p>
+<p><img src="images/infomap/subject 4_community_size_distribution_level_1.png"></p>
+<p>For illustration a depiction of the generated plot for one subject out of the 29.
+This figure depicts a plot of the community size distribution for one subject. The <code>Infomap</code> algorithm computes a hierachy/dendrogram of 2 levels (0-1) for this particular subject. The community size distribution for each level is superimposed on each other in this plot.</p>
+<p>The figure exhibts a common pattern: The community size distrubtion follows approximately a declining <code>exponential curve</code> - also an expected pattern which gives another signal of the correctness and reasonableness of the implementation empirical.</p>
+<p><img src="images/infomap/boxplot.png"></p>
+<p>In conclusion, a boxplot of the statistics of the community size distribution grouped per level</p>
+<div class="footnotes">
+<hr>
+<ol><li id="fn-1"><p>Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23. <a href="http://doi.org/10.1140/epjst/e2010-01179-1">http://doi.org/10.1140/epjst/e2010-01179-1</a><a href="#fnref-1" rev="footnote">&#8617;</a></p></li>
+<li id="fn-2"><p>Community detection in networks: Structural communities versus ground truth Darko Hric, Richard K. Darst, and Santo Fortunato Phys. Rev. E 90, 062805. <a href="http://arxiv.org/pdf/1406.0146v2.pdf">http://arxiv.org/pdf/1406.0146v2.pdf</a><a href="#fnref-2" rev="footnote">&#8617;</a></p></li>
+<li id="fn-3"><p>Community Structure in  social and biological networks. Girvan newman, 2002. PNAS June, vol 99 n 12<a href="#fnref-3" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Appendix">Appendix<a class="anchor-link" href="#Appendix">&#182;</a></h1><h2 id="PageRank-converges-to-Node-degree">PageRank converges to Node degree<a class="anchor-link" href="#PageRank-converges-to-Node-degree">&#182;</a></h2><p>For undirected graphs this theorem can be even more relaxed:</p>
+<p>The Node degree can be identified with the result of the stationary distribution of the markov process which in turn is closely related to a forumulartion of PageRank. The following python code illustrates this numerical.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">graph</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">karate_club_graph</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">page_rank</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre> <span class="n">relative_weight</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">degree</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">difference</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">),</span> <span class="n">page_rank</span><span class="p">,</span> <span class="n">relative_weight</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">difference</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Absolute differences pagerank vs. relative weight (true empirical value)&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Absolute differences pagerank vs. relative weight (true empirical value)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.005562</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.004814</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.007024</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.002601</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.002749</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.003472</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.003472</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.001150</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.002286</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.001488</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.002749</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>0.003155</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>0.001825</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>0.002515</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>0.003965</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>0.001738</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>0.000374</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>0.001738</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>0.000530</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>0.001845</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>0.001775</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>0.002223</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>0.000002</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>0.000342</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>0.000646</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>0.001052</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>0.001305</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>0.005231</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>0.008056</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="/tag/gsoc.html">GSoC</a>
+      <a href="/tag/infomap.html">Infomap</a>
+      <a href="/tag/map-equation.html">Map Equation</a>
+      <a href="/tag/python.html">Python</a>
+    </p>
+  </div>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'fgesserio';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</article>
+
+    <footer>
+      <p>&copy; Florian Gesser </p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "Theory, Mathematics, Implementation and Ground Truth",
+  "headline": "Theory, Mathematics, Implementation and Ground Truth",
+  "datePublished": "2015-08-20 00:00:00+02:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Florian Gesser",
+    "url": "/author/florian-gesser.html"
+  },
+  "image": "{{ SITEURL }}/theme/img/profile.png",
+  "url": "/infomap-part-II.html",
+  "description": "Introduction¶This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm. The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets. Fruthermore a test suite has been realized"
+}
+</script></body>
+</html>

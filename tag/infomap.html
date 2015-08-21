@@ -1,264 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="/theme/css/font-awesome.min.css">
 
-    <meta charset="utf-8">
-    <title>GSoC Blog C-PAC <small>Infomap</small></title>
-    <meta name="description" content="">
-    <meta name="author" content="Florian Gesser">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-    <script src="/theme/html5.js"></script>
-    <![endif]-->
-
-
-    <!-- Le styles -->
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
-    <link href="/theme/local.css" rel="stylesheet">
-    <link href="/theme/pygments.css" rel="stylesheet">
-    <link href="/theme/font-awesome.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Gudea:400,400italic|Alegreya+SC' rel='stylesheet' type='text/css'>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+  <meta name="author" content="Florian Gesser" />
+  <meta name="description" content="" />
+<meta property="og:site_name" content="GSoC Blog C-PAC"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="GSoC Blog C-PAC"/>
+<meta property="og:description" content=""/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content=""/>
+  <title>GSoC Blog C-PAC &ndash; Tag: Infomap</title>
 </head>
-
 <body>
-<header class="blog-header">
-  <div class="container">
-    <div class="row-fluid">
-      <div class="span9">
-	<a href="" class="brand">GSoC Blog C-PAC</a>
-      </div>
-
-      <div class="span3" id="blog-nav">
-	<ul class="nav nav-pills pull-right">
-	    <li >
-	      <a href="/category/gsoc.html ">GSoC</a>
-	</ul>
-      </div>
-    </div> <!-- End of fluid row-->
-  </div>   <!-- End of Container-->
-</header>
-    
-<div class="container">
-    <div class="content">
-    <div class="row-fluid">
-
-        <div class="span10">
-        
-
-        
-
-    <div class='row-fluid''>
-        <div class="article-title span9">
-            <a href="/implementing-infomap.html"><h1>implementing infomap</h1></a>
-        </div>
+  <aside>
+    <div>
+      <a href="">
+        <img src="/theme/img/profile.png" alt="" title="">
+      </a>
+      <h1><a href=""></a></h1>
+      <p></p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://fcp-indi.github.io/" target="_blank">C-PAC Configurable Pipeline for the Analysis of Connectomes</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-twitter" href="http://twitter.com/flrgsr" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="sc-github" href="http://github.com/flrgsr" target="_blank"><i class="fa fa-github"></i></a></li>
+      </ul>
     </div>
-    <div class="row-fluid">
-      <div class="span2">
-<p>Wed 22 July 2015 </p>
+  </aside>
+  <main>
 
-<p style="text-align: left;">
-Filed under <a href="/category/gsoc.html">GSoC</a>
-</p>
-<p style="text-align: left;">
- 
-    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/infomap.html">Infomap</a> <a href="/tag/map-equation.html">Map Equation</a> <a href="/tag/python.html">Python</a> </p>
-<p>
-<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-</p>
-      </div>
-      <div class="article-content span8">
-	<div class="section" id="id1">
-<h2>Implementing Infomap</h2>
-<p>In previous entries it was already mentioned:
-Besides the Louvain algorithm there is another popular choice among community detecion algorithms: <em>Infomap</em></p>
-<div class="section" id="louvain-vs-infomap">
-<h3>Louvain vs Infomap</h3>
-<p>The is a bit of ambiguity in the terminilogy here:</p>
-<p>What is commonly understood as the Louvain method consists actually of a more general underlying heuristic and the introduction of a quality measure.</p>
-<dl class="docutils">
-<dt>Louvain <em>Method</em> <span class="classifier-delimiter">:</span> <span class="classifier">A specific optimization algorithm based on modularity</span></dt>
-<dd>Modularity optimization is a special case of a larger problem: Finding communities by optimizing some quality function Q.
-The Louvain method takes Q = M (Moduliarty), and seeks partitions with maximal modularity.</dd>
-<dt>Louvain <em>Framework</em> <span class="classifier-delimiter">:</span> <span class="classifier">General heuristic to locally optimize a quality function Q</span></dt>
-<dd>A general approach indepedent from a concrete quality function Q.</dd>
-</dl>
-<p>The Infomap algorithm follows the general heuristic of the Louvain <em>Framework</em> by locally moving nodes, however attempts to indentify communities by minimizing the
-map equation L, an entropy-based measure of the partition quality <a class="footnote-reference" href="#id6" id="id2">[1]</a> <a class="footnote-reference" href="#id7" id="id3">[2]</a>.</p>
-</div>
-<div class="section" id="the-map-equation">
-<h3>The Map Equation</h3>
-<p>The term <tt class="docutils literal">map</tt> in map equation comes from the notion that clustering of real-world networks with respect to flow resembles cartography of traffic infrastructure
-for better navigation.</p>
-<p>Optimizing the map equation over possible module assignments identifies modules in which flow stays for a relatively long time, much like geographical maps identify
-cities as regions in which traffic stays for a relative long time. Flow can refer to real flow of, for example, passengers moving between airports, or flow of random
-walkers guided by the nodes and links of the network as a proxy for the real flow.
-But given the network structure, what is the optimal number of modules and the optimal assignment of nodes into those modules?</p>
-<p>The map equation answers these questions using the
-fundamental principles of information theory. All regularities
-in data can be used to compress the data, such that the
-degree of compression becomes a measure for the success
-in finding regularities in the data. The map equation takes
-advantage of this minimum description principle by measuring
-the description length of a random walker on a network <a class="footnote-reference" href="#id8" id="id4">[3]</a>.</p>
-<p>The map equation L(M) gives the average number of bits per step that it takes to describe an infinite random walk on a network partitioned according to M:</p>
-<div class="figure">
-<img alt="" src="../images/infomap/map.png" />
-</div>
-<p>This equation comprises two terms: first is the entropy of the
-movement between modules, and second is the entropy of
-movements within modules (where exiting the module also is
-considered a movement). Each is weighted by the frequency with
-which it occurs in the particular partitioning. Here, q_arc is the
-probability that the random walk switches modules on any given
-step. H(Q) is the entropy of the module names, i.e., the entropy
-of the underlined codewords. H(Pi) is the entropy of
-the within-module movements, including the exit code for
-module i. The weight p^i_arc is the fraction of within-module
-movements that occur in module i, plus the probability of exiting
-module i <a class="footnote-reference" href="#id6" id="id5">[1]</a>.</p>
-<dl class="docutils">
-<dt>For more details for the formal aspects:</dt>
-<dd><a class="reference external" href="http://www.pnas.org/content/suppl/2008/01/10/0706851105.DC1/06851SuppAppendix.pdf">http://www.pnas.org/content/suppl/2008/01/10/0706851105.DC1/06851SuppAppendix.pdf</a></dd>
-</dl>
-<table class="docutils footnote" frame="void" id="id6" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> Rosvall, M., &amp; Bergstrom, C. T. (2008). Maps of random walks on complex networks reveal community structure. Pnas, 105(4), 1118–1123. <a class="reference external" href="http://doi.org/10.1073/pnas.0706851105">http://doi.org/10.1073/pnas.0706851105</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id7" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Rosvall, M., Axelsson, D., &amp; Bergstrom, C. T. (2010). The map equation. The European Physical Journal Special Topics, 178(1), 13–23. <a class="reference external" href="http://doi.org/10.1140/epjst/e2010-01179-1">http://doi.org/10.1140/epjst/e2010-01179-1</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id8" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>Bae, S.-H., Halperin, D., West, J., Rosvall, M., &amp; Howe, B. (2013). Scalable Flow-Based Community Detection for Large-Scale Network Analysis (pp. 303–310). Presented at the 2013 IEEE 13th International Conference on Data Mining Workshops (ICDMW), IEEE. <a class="reference external" href="http://doi.org/10.1109/ICDMW.2013.138">http://doi.org/10.1109/ICDMW.2013.138</a></td></tr>
-</tbody>
-</table>
-</div>
-</div>
- 
-	<a class="btn btn-mini xsmall" href="/implementing-infomap.html">
-          <i class="icon-comment"></i> Comment </a>
-	<hr />
-      </div>
+<article>
+  <header>
+    <h2><a href="/theory-mathematics-implementation-and-ground-truth.html#theory-mathematics-implementation-and-ground-truth">Theory, Mathematics, Implementation and Ground Truth</a></h2>
+    <p>
+      Posted on Thu 20 August 2015 in <a href="/category/gsoc.html">GSoC</a> &#8226;
+Tagged with
+      <a href="/tag/gsoc.html">GSoC</a>,      <a href="/tag/infomap.html">Infomap</a>,      <a href="/tag/map-equation.html">Map Equation</a>,      <a href="/tag/python.html">Python</a>      &#8226; <a href="/theory-mathematics-implementation-and-ground-truth.html#disqus_thread">Leave a comment</a>
+    </p>
+  </header>
+  <div>
       
-    </div>
-    
-
- 
-        
-
-
-
-    <div class='row-fluid'>
-      <div class='article-title span9'> 
-        <a href="/infomap-python-wrapper.html"><h1>infomap-python-wrapper</h1></a>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span2">
-<p>Thu 11 June 2015 </p>
-
-<p style="text-align: left;">
-Filed under <a href="/category/gsoc.html">GSoC</a>
-</p>
-<p style="text-align: left;">
- 
-    Tags <a href="/tag/gsoc.html">GSoC</a> <a href="/tag/infomap.html">Infomap</a> <a href="/tag/python.html">Python</a> </p>
-<p>
-<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="flrgsr">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-</p>
-      </div>
-      <div class="summary span8">
-	 
-	<a class="btn btn-mini xsmall" href="/infomap-python-wrapper.html">
-          <i class="icon-plus-sign"></i> Read More </a>
-	<hr />
-      </div>
-      
-    </div>
-      
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/tag/infomap.html">1</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
- 
-  
-        </div>
-        
-        
-    </div>     </div> </div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>This and the last week has been intensivly spent to debug and refine the implementation of the Infomap Algorithm.
+The implementation is now functionally complete, correct and has been extensivly tested against ground truth graphs with known community structure as well as on real world brain imaging data sets.</p>
+<p>Fruthermore a test suite has been <a href="https://github.com/roijo/C-PAC_complexitytools/blob/master/CPAC/community/algorithms/infomap_test.py">realized</a>
+      <a class="btn" href="/theory-mathematics-implementation-and-ground-truth.html#theory-mathematics-implementation-and-ground-truth">Continue reading</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="/implementing-infomap.html#implementing-infomap">The Map Equation</a></h2>
+    <p>
+      Posted on Wed 22 July 2015 in <a href="/category/gsoc.html">GSoC</a> &#8226;
+Tagged with
+      <a href="/tag/gsoc.html">GSoC</a>,      <a href="/tag/infomap.html">Infomap</a>,      <a href="/tag/map-equation.html">Map Equation</a>,      <a href="/tag/python.html">Python</a>      &#8226; <a href="/implementing-infomap.html#disqus_thread">Leave a comment</a>
+    </p>
+  </header>
+  <div>
+      
+      <a class="btn" href="/implementing-infomap.html#implementing-infomap">Continue reading</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="/infomap-python-wrapper.html#infomap-python-wrapper">infomap-python-wrapper</a></h2>
+    <p>
+      Posted on Thu 11 June 2015 in <a href="/category/gsoc.html">GSoC</a> &#8226;
+Tagged with
+      <a href="/tag/gsoc.html">GSoC</a>,      <a href="/tag/infomap.html">Infomap</a>,      <a href="/tag/python.html">Python</a>      &#8226; <a href="/infomap-python-wrapper.html#disqus_thread">Leave a comment</a>
+    </p>
+  </header>
+  <div>
+      
+      <a class="btn" href="/infomap-python-wrapper.html#infomap-python-wrapper">Continue reading</a>
+  </div>
+</article>
 
-<!--footer-->
-<div class="container">
-  <div class="well" style="background-color: #E9EFF6">
-    <div id="blog-footer">
-      <div class="row-fluid">
-	<div class="social span2" align="center" id="socialist">
-	  <ul class="nav nav-list">
-	    <li class="nav-header">
-	      Social
-	    </li>
-	    <li><a href="http://twitter.com/flrgsr"><i class="icon-twitter" style="color: #1f334b"></i>twitter</a></li>
-	    <li><a href="http://github.com/flrgsr"><i class="icon-github" style="color: #1f334b"></i>github</a></li>
+  <div class="pagination">
+  </div>
 
-	  </ul>
-	</div>
-        <div class="links span2" align="center">
-          <ul class="nav nav-list">
-            <li class="nav-header"> 
-              Links
-            </li>
-            
-            <li><a href="http://fcp-indi.github.io/">C-PAC Configurable Pipeline for the Analysis of Connectomes</a></li>
-          </ul>
-        </div>
-	<div class="site-nav span2" align="center">
-          <ul class="nav nav-list" id="site-links">
-            <li class="nav-header"> 
-              Site
-            </li>
-            <li><a href=""><i class="icon-home" style="color: #1f334b">
-                </i>Home</a></li>
-            <li><a href="/archives.html"><i class="icon-list" style="color: #1f334b">
-                </i>Archives</a></li>
-	    <li><a href="/tags.html"><i class="icon-tags" style="color: #1f334b">
-                </i>Tags</a></li>
-	    
-	  </ul>
-
-        </div>
-
-      </div> <!--end of fluid row-->
-    </div> <!--end of blog-footer-->
-    <hr />
-    <p align="center"><a href="">GSoC Blog C-PAC</a>
-      &copy; Florian Gesser
-    Powered by <a href="https://github.com/getpelican/pelican">Pelican</a> and
-        <a href="https://twitter.github.com/bootstrap">Twitter Bootstrap</a>. 
-        Icons by <a href="https://fortawesome.github.com/Font-Awesome">Font Awesome</a> and 
-        <a href="https://gregoryloucas.github.com/Font-Awesome-More">Font Awesome More</a></p>
-
-  </div> <!--end of well -->
-</div> <!--end of container -->
-
-<!--/footer-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-
-
-
+    <footer>
+      <p>&copy; Florian Gesser </p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " GSoC Blog C-PAC ",
+  "url" : "",
+  "image": "",
+  "description": ""
+}
+</script><script type="text/javascript">
+    var disqus_shortname = 'fgesserio';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
 </body>
 </html>
